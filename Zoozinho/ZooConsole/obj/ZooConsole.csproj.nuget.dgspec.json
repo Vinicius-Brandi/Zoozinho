@@ -50,6 +50,16 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "NHibernate": {
+              "target": "Package",
+              "version": "[5.5.2, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

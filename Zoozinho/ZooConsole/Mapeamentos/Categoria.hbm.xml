@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping
+  xmlns="urn:nhibernate-mapping-2.2"
+  namespace="ZooConsole.Models"
+  assembly="ZooConsole">
+
+	<class name="Categoria" lazy="false" table="categoria">
+
+		<id name="Id" column="id" type="long">
+			<generator class="sequence">
+				<param name="sequence">categoria_seq</param>
+			</generator>
+		</id>
+		<property name="Nome" column="nome" type="string" length="100" not-null="true" />
+
+		<!-- Relacionamentos -->
+		<bag name="Especies" table="especie" cascade="all-delete-orphan" inverse="true" lazy="false">
+			<key column="categoriaid" />
+			<one-to-many class="Especie" />
+		</bag>
+
+		<bag name="Recintos" table="recinto" cascade="all-delete-orphan" inverse="true" lazy="false">
+			<key column="categoriaid" />
+			<one-to-many class="Recinto" />
+		</bag>
+
+	</class>
+</hibernate-mapping>
+
