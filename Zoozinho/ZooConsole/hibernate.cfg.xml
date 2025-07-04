@@ -1,22 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
 	<session-factory>
-		<!-- Driver e Dialeto para PostgreSQL -->
-		<property name="connection.driver_class">NHibernate.Driver.NpgsqlDriver</property>
 		<property name="dialect">NHibernate.Dialect.PostgreSQLDialect</property>
-
-		<!-- Exibir SQL no console -->
-		<property name="show_sql">true</property>
-
-		<!-- Validação de proxy (você pode manter como false) -->
+		<property name="connection.driver_class">NHibernate.Driver.NpgsqlDriver</property>
+		<property name="connection.connection_string">Server=127.0.0.1;Port=5432;Database=postgres;User Id=postgres;Password=1234</property>
+		<property name="show_sql">false</property>
 		<property name="use_proxy_validator">false</property>
-
-		<!-- Contexto de sessão -->
-		<property name="current_session_context_class">
-			thread_static
-		</property>
-
-		<!-- Aqui é onde NHibernate procura os arquivos .hbm.xml -->
-		<mapping assembly="ZooConsole" />
+		<mapping assembly="ZooConsole"></mapping>
 	</session-factory>
 </hibernate-configuration>
