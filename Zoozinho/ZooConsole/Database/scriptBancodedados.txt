@@ -1,0 +1,32 @@
+-- SEQUENCES
+CREATE SEQUENCE categoria_seq;
+CREATE SEQUENCE especie_seq;
+CREATE SEQUENCE recinto_seq;
+
+-- TABELA CATEGORIA
+CREATE TABLE categoria (
+    id BIGINT NOT NULL DEFAULT nextval('categoria_seq'),
+    nome VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- TABELA ESPECIE
+CREATE TABLE especie (
+    id BIGINT NOT NULL DEFAULT nextval('especie_seq'),
+    nome VARCHAR(100) NOT NULL,
+    alimentacao VARCHAR(100),
+    comportamento VARCHAR(100),
+    categoriaid BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (categoriaid) REFERENCES categoria(id)
+);
+
+-- TABELA RECINTO
+CREATE TABLE recinto (
+    id BIGINT NOT NULL DEFAULT nextval('recinto_seq'),
+    nome VARCHAR(100) NOT NULL,
+    categoriaid BIGINT NOT NULL,
+    capacidademaxhabitats INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (categoriaid) REFERENCES categoria(id)
+);
