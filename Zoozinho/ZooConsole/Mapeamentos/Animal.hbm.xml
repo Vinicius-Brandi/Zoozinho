@@ -1,23 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
                    namespace="ZooConsole.Models"
                    assembly="ZooConsole">
 
 	<class name="Animal" table="animal" lazy="false">
-		<id name="Id" column="id" type="int">
+
+		<id name="Id" column="id" type="long">
 			<generator class="sequence">
 				<param name="sequence">animal_seq</param>
 			</generator>
 		</id>
 
-		<property name="Nome" column="nome" type="string" not-null="true" />
-		<property name="Sexo" column="sexo" type="string" />
-		<property name="Idade" column="idade" type="int" />
-		<property name="Peso" column="peso" type="double" />
+		<property name="Nome" column="nome" type="string" not-null="true"/>
+		<property name="Sexo" column="sexo" type="string"/>
+		<property name="Idade" column="idade" type="int"/>
+		<property name="Peso" column="peso" type="decimal"/>
 
-		<many-to-one name="Especie" class="Especie" column="especieid" not-null="true" />
-		<many-to-one name="Habitat" class="Habitat" column="habitatid" />
-		<many-to-one name="Galpao" class="Galpao" column="galpaoid" />
+		<many-to-one name="Especie" class="Especie" column="especieid" not-null="true"/>
+		<many-to-one name="Galpao" class="Galpao" column="galpaoid"/>
+		<many-to-one name="Habitat" class="Habitat" column="habitatid"/>
+
 	</class>
 </hibernate-mapping>
+
+
 

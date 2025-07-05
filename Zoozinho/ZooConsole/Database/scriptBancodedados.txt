@@ -2,8 +2,8 @@
 CREATE SEQUENCE categoria_seq;
 CREATE SEQUENCE especie_seq;
 CREATE SEQUENCE recinto_seq;
-CREATE SEQUENCE habitat_seq;
 CREATE SEQUENCE galpao_seq;
+CREATE SEQUENCE habitat_seq;
 CREATE SEQUENCE animal_seq;
 CREATE SEQUENCE movimentacao_seq;
 
@@ -14,6 +14,16 @@ CREATE TABLE categoria (
     PRIMARY KEY (id)
 );
 
+-- TABELA RECINTO
+CREATE TABLE recinto (
+    id BIGINT NOT NULL DEFAULT nextval('recinto_seq'),
+    nome VARCHAR(100) NOT NULL,
+    categoriaid BIGINT NOT NULL UNIQUE,
+    capacidademaxhabitats INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (categoriaid) REFERENCES categoria(id)
+);
+
 -- TABELA ESPECIE
 CREATE TABLE especie (
     id BIGINT NOT NULL DEFAULT nextval('especie_seq'),
@@ -21,16 +31,6 @@ CREATE TABLE especie (
     alimentacao VARCHAR(100),
     comportamento VARCHAR(100),
     categoriaid BIGINT NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (categoriaid) REFERENCES categoria(id)
-);
-
--- TABELA RECINTO (1:1 com categoria)
-CREATE TABLE recinto (
-    id BIGINT NOT NULL DEFAULT nextval('recinto_seq'),
-    nome VARCHAR(100) NOT NULL,
-    categoriaid BIGINT NOT NULL UNIQUE,
-    capacidademaxhabitats INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (categoriaid) REFERENCES categoria(id)
 );
@@ -61,7 +61,7 @@ CREATE TABLE animal (
     nome VARCHAR(100) NOT NULL,
     sexo VARCHAR(10),
     idade INT,
-    peso DOUBLE PRECISION,
+    peso NUMERIC(10,2),
     especieid BIGINT NOT NULL,
     habitatid BIGINT,
     galpaoid BIGINT,

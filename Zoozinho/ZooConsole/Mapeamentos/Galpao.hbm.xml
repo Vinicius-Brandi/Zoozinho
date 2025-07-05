@@ -4,7 +4,7 @@
                    assembly="ZooConsole">
 
 	<class name="Galpao" table="galpao" lazy="false">
-		<id name="Id" column="id" type="int">
+		<id name="Id" column="id" type="long">
 			<generator class="sequence">
 				<param name="sequence">galpao_seq</param>
 			</generator>

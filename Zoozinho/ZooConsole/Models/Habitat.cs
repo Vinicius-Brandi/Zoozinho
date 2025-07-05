@@ -8,11 +8,11 @@ namespace ZooConsole.Models
 {
     public class Habitat
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Nome { get; set; }
-        public int RecintoId { get; set; }
+        public long RecintoId { get; set; }
         public Recinto Recinto { get; set; }
-        public int EspecieId { get; set; }
+        public long EspecieId { get; set; }
         public Especie Especie { get; set; }
         public int MaxCapacidade { get; set; }
         public List<Animal> Animais { get; set; } = new List<Animal>();

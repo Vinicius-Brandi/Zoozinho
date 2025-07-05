@@ -8,7 +8,7 @@ namespace ZooConsole.Models
 {
     public class Galpao
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Nome { get; set; } = "Galpão Principal";
         public int CapacidadeMaxima { get; set; } = 10;
         public List<Animal> Animais { get; set; } = new List<Animal>();

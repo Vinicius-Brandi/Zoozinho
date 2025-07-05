@@ -4,7 +4,7 @@
                    assembly="ZooConsole">
 
 	<class name="Recinto" table="recinto" lazy="false">
-		<id name="Id" column="id" type="int">
+		<id name="Id" column="id" type="long">
 			<generator class="sequence">
 				<param name="sequence">recinto_seq</param>
 			</generator>
