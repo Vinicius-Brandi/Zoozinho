@@ -2,6 +2,10 @@
 CREATE SEQUENCE categoria_seq;
 CREATE SEQUENCE especie_seq;
 CREATE SEQUENCE recinto_seq;
+CREATE SEQUENCE habitat_seq;
+CREATE SEQUENCE galpao_seq;
+CREATE SEQUENCE animal_seq;
+CREATE SEQUENCE movimentacao_seq;
 
 -- TABELA CATEGORIA
 CREATE TABLE categoria (
@@ -21,12 +25,67 @@ CREATE TABLE especie (
     FOREIGN KEY (categoriaid) REFERENCES categoria(id)
 );
 
--- TABELA RECINTO
+-- TABELA RECINTO (1:1 com categoria)
 CREATE TABLE recinto (
     id BIGINT NOT NULL DEFAULT nextval('recinto_seq'),
     nome VARCHAR(100) NOT NULL,
-    categoriaid BIGINT NOT NULL,
+    categoriaid BIGINT NOT NULL UNIQUE,
     capacidademaxhabitats INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (categoriaid) REFERENCES categoria(id)
+);
+
+-- TABELA GALPAO
+CREATE TABLE galpao (
+    id BIGINT NOT NULL DEFAULT nextval('galpao_seq'),
+    nome VARCHAR(100) NOT NULL,
+    capacidademaxima INT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- TABELA HABITAT
+CREATE TABLE habitat (
+    id BIGINT NOT NULL DEFAULT nextval('habitat_seq'),
+    nome VARCHAR(100) NOT NULL,
+    recintoid BIGINT NOT NULL,
+    especieid BIGINT NOT NULL,
+    maxcapacidade INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (recintoid) REFERENCES recinto(id),
+    FOREIGN KEY (especieid) REFERENCES especie(id)
+);
+
+-- TABELA ANIMAL
+CREATE TABLE animal (
+    id BIGINT NOT NULL DEFAULT nextval('animal_seq'),
+    nome VARCHAR(100) NOT NULL,
+    sexo VARCHAR(10),
+    idade INT,
+    peso DOUBLE PRECISION,
+    especieid BIGINT NOT NULL,
+    habitatid BIGINT,
+    galpaoid BIGINT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (especieid) REFERENCES especie(id),
+    FOREIGN KEY (habitatid) REFERENCES habitat(id),
+    FOREIGN KEY (galpaoid) REFERENCES galpao(id)
+);
+
+-- TABELA MOVIMENTACAO
+CREATE TABLE movimentacao (
+    id BIGINT NOT NULL DEFAULT nextval('movimentacao_seq'),
+    datahora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    animalid BIGINT NOT NULL,
+    origem INT NOT NULL,
+    origemhabitatid BIGINT,
+    origengalpaoid BIGINT,
+    destino INT NOT NULL,
+    destinohabitatid BIGINT,
+    destinogalpaoid BIGINT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (animalid) REFERENCES animal(id),
+    FOREIGN KEY (origemhabitatid) REFERENCES habitat(id),
+    FOREIGN KEY (origengalpaoid) REFERENCES galpao(id),
+    FOREIGN KEY (destinohabitatid) REFERENCES habitat(id),
+    FOREIGN KEY (destinogalpaoid) REFERENCES galpao(id)
 );

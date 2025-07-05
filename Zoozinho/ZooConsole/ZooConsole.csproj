@@ -8,8 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\**" />
+    <Compile Remove="Repository\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Repository\**" />
+    <None Remove="Interfaces\**" />
+    <None Remove="Repository\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="hibernate.cfg.xml" />
+    <None Remove="Mapeamentos\Categoria - Cópia.hbm.xml" />
     <None Remove="Mapeamentos\Categoria.hbm.xml" />
+    <None Remove="Mapeamentos\Especie.hbm.xml" />
+    <None Remove="Mapeamentos\Recinto.hbm.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +34,8 @@
     <EmbeddedResource Include="Mapeamentos\Categoria.hbm.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Mapeamentos\Especie.hbm.xml" />
+    <EmbeddedResource Include="Mapeamentos\Recinto.hbm.xml" />
   </ItemGroup>
 
   <ItemGroup>

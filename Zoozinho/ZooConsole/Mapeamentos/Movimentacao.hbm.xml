@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   namespace="ZooConsole.Models"
+                   assembly="ZooConsole">
+
+	<class name="Movimentacao" table="movimentacao" lazy="false">
+		<id name="Id" column="id" type="int">
+			<generator class="sequence">
+				<param name="sequence">movimentacao_seq</param>
+			</generator>
+		</id>
+
+		<property name="DataHora" column="datahora" type="timestamp" not-null="true" />
+		<property name="Origem" column="origem" type="int" not-null="true" />
+		<property name="Destino" column="destino" type="int" not-null="true" />
+
+		<many-to-one name="Animal" class="Animal" column="animalid" not-null="true" />
+		<many-to-one name="OrigemHabitat" class="Habitat" column="origemhabitatid" />
+		<many-to-one name="OrigemGalpao" class="Galpao" column="origengalpaoid" />
+		<many-to-one name="DestinoHabitat" class="Habitat" column="destinohabitatid" />
+		<many-to-one name="DestinoGalpao" class="Galpao" column="destinogalpaoid" />
+	</class>
+</hibernate-mapping>
+

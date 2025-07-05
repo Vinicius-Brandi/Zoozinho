@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   namespace="ZooConsole.Models"
+                   assembly="ZooConsole">
+
+	<class name="Galpao" table="galpao" lazy="false">
+		<id name="Id" column="id" type="int">
+			<generator class="sequence">
+				<param name="sequence">galpao_seq</param>
+			</generator>
+		</id>
+
+		<property name="Nome" column="nome" type="string" not-null="true" />
+		<property name="CapacidadeMaxima" column="capacidademaxima" type="int" not-null="true" />
+
+		<bag name="Animais" inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="galpaoid"/>
+			<one-to-many class="Animal"/>
+		</bag>
+	</class>
+</hibernate-mapping>
+

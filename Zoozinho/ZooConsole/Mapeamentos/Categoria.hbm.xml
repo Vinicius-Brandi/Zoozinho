@@ -1,29 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping
-  xmlns="urn:nhibernate-mapping-2.2"
-  namespace="ZooConsole.Models"
-  assembly="ZooConsole">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   namespace="ZooConsole.Models"
+                   assembly="ZooConsole">
 
-	<class name="Categoria" lazy="false" table="categoria">
+	<class name="Categoria" table="categoria" lazy="false">
 
 		<id name="Id" column="id" type="long">
 			<generator class="sequence">
 				<param name="sequence">categoria_seq</param>
 			</generator>
 		</id>
-		<property name="Nome" column="nome" type="string" length="100" not-null="true" />
 
-		<!-- Relacionamentos -->
-		<bag name="Especies" table="especie" cascade="all-delete-orphan" inverse="true" lazy="false">
-			<key column="categoriaid" />
-			<one-to-many class="Especie" />
+		<property name="Nome" column="nome" type="string" not-null="true" length="100" />
+
+		<bag name="Especies" inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="categoriaid"/>
+			<one-to-many class="Especie"/>
 		</bag>
 
-		<bag name="Recintos" table="recinto" cascade="all-delete-orphan" inverse="true" lazy="false">
-			<key column="categoriaid" />
-			<one-to-many class="Recinto" />
-		</bag>
+		<one-to-one name="Recinto" class="Recinto" property-ref="Categoria" cascade="all"/>
 
 	</class>
 </hibernate-mapping>
+
 

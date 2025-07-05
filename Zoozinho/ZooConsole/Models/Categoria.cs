@@ -14,6 +14,6 @@ namespace ZooConsole.Models
         [Required(ErrorMessage = "O nome é obrigatório.")]
         public string Nome { get; set; }
         public List<Especie> Especies { get; set; } = new List<Especie>();
-        public List<Recinto> Recintos { get; set; } = new List<Recinto>();
+        public Recinto Recinto { get; set; }
     }
 }
