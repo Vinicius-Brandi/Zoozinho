@@ -4,7 +4,6 @@
                    assembly="ZooConsole">
 
 	<class name="Categoria" table="categoria" lazy="false">
-
 		<id name="Id" column="id" type="long">
 			<generator class="sequence">
 				<param name="sequence">categoria_seq</param>
@@ -14,13 +13,14 @@
 		<property name="Nome" column="nome" type="string" not-null="true" length="100" />
 
 		<bag name="Especies" inverse="true" cascade="all-delete-orphan" lazy="false">
-			<key column="categoriaid"/>
-			<one-to-many class="Especie"/>
+			<key column="categoriaid" />
+			<one-to-many class="Especie" />
 		</bag>
 
-		<one-to-one name="Recinto" class="Recinto" property-ref="Categoria" cascade="all"/>
-
+		<one-to-one name="Recinto" class="Recinto" property-ref="Categoria" cascade="all" />
 	</class>
+
+
 </hibernate-mapping>
 
 
