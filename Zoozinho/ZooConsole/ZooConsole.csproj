@@ -1,50 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>ZooConsole</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Interfaces\**" />
-    <Compile Remove="Repository\**" />
-    <EmbeddedResource Remove="Interfaces\**" />
-    <EmbeddedResource Remove="Repository\**" />
-    <None Remove="Interfaces\**" />
-    <None Remove="Repository\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="hibernate.cfg.xml" />
+		<None Remove="Mapeamentos\Animal.hbm.xml" />
+		<None Remove="Mapeamentos\Categoria.hbm.xml" />
+		<None Remove="Mapeamentos\Especie.hbm.xml" />
+		<None Remove="Mapeamentos\Galpao.hbm.xml" />
+		<None Remove="Mapeamentos\Habitat.hbm.xml" />
+		<None Remove="Mapeamentos\Movimentacao.hbm.xml" />
+		<None Remove="Mapeamentos\Recinto.hbm.xml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="hibernate.cfg.xml" />
-    <None Remove="Mapeamentos\Categoria - Cópia.hbm.xml" />
-    <None Remove="Mapeamentos\Categoria.hbm.xml" />
-    <None Remove="Mapeamentos\Especie.hbm.xml" />
-    <None Remove="Mapeamentos\Recinto.hbm.xml" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="hibernate.cfg.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="hibernate.cfg.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Mapeamentos\Animal.hbm.xml" />
+		<EmbeddedResource Include="Mapeamentos\Categoria.hbm.xml" />
+		<EmbeddedResource Include="Mapeamentos\Especie.hbm.xml" />
+		<EmbeddedResource Include="Mapeamentos\Galpao.hbm.xml" />
+		<EmbeddedResource Include="Mapeamentos\Habitat.hbm.xml" />
+		<EmbeddedResource Include="Mapeamentos\Movimentacao.hbm.xml" />
+		<EmbeddedResource Include="Mapeamentos\Recinto.hbm.xml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Mapeamentos\Categoria.hbm.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mapeamentos\Especie.hbm.xml" />
-    <EmbeddedResource Include="Mapeamentos\Recinto.hbm.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NHibernate" Version="5.5.2" />
-    <PackageReference Include="Npgsql" Version="9.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Database\" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="NHibernate" Version="5.5.2" />
+		<PackageReference Include="Npgsql" Version="9.0.3" />
+	</ItemGroup>
 
 </Project>

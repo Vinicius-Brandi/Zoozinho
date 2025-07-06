@@ -1,6 +1,12 @@
-﻿namespace ZooConsole.Repository
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ZooConsole.Repository
 {
-    public interface IRepository
+    public interface IRepositorio
     {
         void Incluir(object model);
         void Salvar(object model);
@@ -12,4 +18,5 @@
         void Commit();
         void Rollback();
     }
+
 }

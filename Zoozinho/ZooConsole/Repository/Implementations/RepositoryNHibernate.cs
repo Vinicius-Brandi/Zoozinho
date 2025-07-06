@@ -4,22 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ZooConsole.Repository;
 
 namespace ZooConsole.Repository.Implementations
 {
-    public class RepositoryNHibernate : IRepository
+    public class RepositoryNHibernate : IRepositorio
     {
         private readonly ISessionFactory sessionFactory;
-        private readonly ISession session;
+        private ISession session;
 
         public RepositoryNHibernate(ISessionFactory sessionFactory)
         {
             this.sessionFactory = sessionFactory;
             this.session = sessionFactory.OpenSession();
         }
-
-
         public IQueryable<T> Consultar<T>()
         {
             return session.Query<T>();

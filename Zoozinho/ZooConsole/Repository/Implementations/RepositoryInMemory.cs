@@ -1,10 +1,12 @@
-﻿
-using ZooConsole.Interfaces;
-using ZooConsole.Repository;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ZooConsole.Repository.Implementations
 {
-    public class RepositoryInMemory : IRepository, IDisposable
+    public class RepositoryInMemory : IRepositorio, IDisposable
     {
         private static long contador = 10000;
 
@@ -60,6 +62,7 @@ namespace ZooConsole.Repository.Implementations
 
         public void Salvar(object model)
         {
+
         }
 
         public IDisposable IniciarTransacao()

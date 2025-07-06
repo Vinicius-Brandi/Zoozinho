@@ -27,7 +27,7 @@ builder.Services.AddTransient<CategoriaService>();
 var isInMemory = builder.Configuration.GetValue("UseInMemory", false);
 if (isInMemory)
 {
-    builder.Services.AddTransient<IRepository, RepositoryInMemory>();
+    builder.Services.AddTransient<IRepositorio, RepositoryInMemory>();
 }
 else
 {
