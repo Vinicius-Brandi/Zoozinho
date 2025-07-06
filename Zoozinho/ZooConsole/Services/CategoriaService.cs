@@ -10,9 +10,9 @@ namespace ZooConsole.Services
 {
     public class CategoriaService
     {
-        private readonly IRepository _repository;
+        private readonly IRepositorio _repository;
 
-        public CategoriaService(IRepository repository)
+        public CategoriaService(IRepositorio repository)
         {
             _repository = repository;
         }

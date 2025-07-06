@@ -8,7 +8,6 @@ using ZooConsole.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers()
     .AddJsonOptions(o =>
@@ -33,7 +32,6 @@ else
 {
     var connectionString = builder.Configuration
         .GetConnectionString("Default");
-    // criar implementacao para ISessionFactory
     builder.Services.AddSingleton(c =>
     {
         var config = new Configuration().Configure();
@@ -42,7 +40,7 @@ else
         );
         return config.BuildSessionFactory();
     });
-    builder.Services.AddTransient<IRepository, RepositoryNHibernate>();
+    builder.Services.AddTransient<IRepositorio, RepositoryNHibernate>();
 }
 
 var app = builder.Build();
