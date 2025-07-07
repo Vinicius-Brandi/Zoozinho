@@ -16,6 +16,8 @@
 
 		<many-to-one name="Categoria" class="Categoria" column="categoriaid" not-null="true" />
 
+		<one-to-one name="Habitat" class="Habitat" property-ref="Especie" cascade="all"/>
+
 		<bag name="Animais" inverse="true" cascade="all-delete-orphan" lazy="false">
 			<key column="especieid" />
 			<one-to-many class="Animal"/>

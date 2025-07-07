@@ -8,12 +8,12 @@ namespace ZooConsole.Models
 {
     public class Especie
     {
-        public long Id { get; set; }
-        public string Nome { get; set; }
-        public string Alimentacao { get; set; }
-        public string Comportamento { get; set; }
-        public long CategoriaId { get; set; }
-        public Categoria Categoria { get; set; }
-        public List<Animal> Animais { get; set; } = new List<Animal>();
+        public virtual long Id { get; set; }
+        public virtual string Nome { get; set; }
+        public virtual string Alimentacao { get; set; }
+        public virtual string Comportamento { get; set; }
+        public virtual Categoria Categoria { get; set; }
+        public virtual Habitat? Habitat { get; set; }
+        public virtual List<Animal> Animais { get; set; } = new List<Animal>();
     }
 }

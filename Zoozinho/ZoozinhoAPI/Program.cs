@@ -1,25 +1,18 @@
+using Microsoft.AspNetCore.Mvc;
+using NHibernate;
 using ZooConsole.Repository;
 using ZooConsole.Repository.Implementations;
 using ZooConsole.Services;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using NHibernate.Cfg;
-using System.Text.Json.Serialization;
-using ZooConsole.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddControllers()
-    .AddJsonOptions(o =>
-    {
-        o.JsonSerializerOptions.ReferenceHandler =
-            ReferenceHandler.IgnoreCycles;
-    });
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<CategoriaService>();
+builder.Services.AddTransient<EspecieService>();
 
 var isInMemory = builder.Configuration.GetValue("UseInMemory", false);
 if (isInMemory)
@@ -28,16 +21,15 @@ if (isInMemory)
 }
 else
 {
-    var connectionString = builder.Configuration
-        .GetConnectionString("Default");
-    builder.Services.AddSingleton(c =>
+    var connectionString = builder.Configuration.GetConnectionString("Default");
+
+    builder.Services.AddSingleton<ISessionFactory>(c =>
     {
-        var config = new Configuration().Configure();
-        config.DataBaseIntegration(
-            x => x.ConnectionString = connectionString
-        );
+        var config = new NHibernate.Cfg.Configuration().Configure();
+        config.DataBaseIntegration(x => x.ConnectionString = connectionString);
         return config.BuildSessionFactory();
     });
+
     builder.Services.AddTransient<IRepositorio, RepositoryNHibernate>();
 }
 
@@ -49,16 +41,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(
-    b => b.AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowAnyOrigin()
-    );
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
