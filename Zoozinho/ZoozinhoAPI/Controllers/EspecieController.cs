@@ -1,70 +1,75 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using ZooConsole;
 using ZooConsole.DTOs;
 using ZooConsole.Models;
 using ZooConsole.Services;
 
-namespace ZoozinhoAPI.Controllers
+namespace ZooAPI.Controllers
 {
-    [Route("api/especie")]
+    [Route("api/[controller]")]
     [ApiController]
     public class EspecieController : ControllerBase
     {
-        private readonly EspecieService _servico;
-        public EspecieController(EspecieService servico)
+        private readonly EspecieService _service;
+
+        public EspecieController(EspecieService service)
         {
-            _servico = servico;
+            _service = service;
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] EspecieDTO dto)
+        public IActionResult Post([FromBody] EspecieDTO dto)
         {
-            var especie = new Especie
-            {
-                Nome = dto.Nome,
-                Alimentacao = dto.Alimentacao,
-                Comportamento = dto.Comportamento,
-                Categoria = new Categoria { Id = dto.CategoriaId }
-            };
+            if (_service.Cadastrar(dto, out List<MensagemErro> erros))
+                return Ok(dto);
 
-            if (_servico.Cadastrar(especie, out var erros))
-                return Ok(especie);
+            // ADICIONE ISSO TEMPORARIAMENTE:
+            Console.WriteLine("Erros encontrados:");
+            foreach (var erro in erros)
+            {
+                Console.WriteLine($"- {erro.Propriedade}: {erro.Mensagem}");
+            }
 
             return UnprocessableEntity(erros);
         }
 
-
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult Get(string pesquisa = "")
         {
-            var especies = _servico.Listar();
+            var especies = string.IsNullOrWhiteSpace(pesquisa)
+                ? _service.Consultar()
+                : _service.Consultar(pesquisa);
+
             return Ok(especies);
         }
 
-        [HttpGet("{id:long}")]
-        public IActionResult BuscarPorId(long id)
-        {
-            var especie = _servico.BuscarPorId(id);
-            if (especie == null)
-                return NotFound(new { mensagem = "Espécie não encontrada." });
-            return Ok(especie);
-        }
 
-        [HttpPut]
-        public IActionResult Atualizar([FromBody] Especie especie)
+        [HttpPut("{id}")]
+        public IActionResult Put(long id, [FromBody] EspecieDTO dto)
         {
-            if (_servico.Atualizar(especie, out var erros))
-                return Ok(especie);
+            if (_service.Atualizar(id, dto, out List<MensagemErro> erros))
+                return Ok(dto);
+
             return UnprocessableEntity(erros);
         }
 
-        [HttpDelete("{id:long}")]
-        public IActionResult Excluir(long id, [FromQuery] bool forcar = false) 
+        [HttpDelete("{id}")]
+        public IActionResult Delete(long id)
         {
-            if (_servico.Excluir(id, out var erros, forcar))
-                return NoContent();
+            var excluida = _service.Deletar(id);
+            if (excluida == null)
+                return BadRequest(new { erro = "Não é possível excluir: espécie vinculada a habitat ou animais." });
 
-            return UnprocessableEntity(erros);
+            return Ok(excluida);
+        }
+
+        [HttpGet("relatorio")]
+        public IActionResult Relatorio()
+        {
+            var relatorio = _service.RelatorioPorCategoria();
+            return Ok(relatorio);
         }
     }
 }
+
+

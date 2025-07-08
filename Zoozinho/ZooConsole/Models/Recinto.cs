@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ZooConsole.Models
 {
     public class Recinto
     {
-        public long Id { get; set; }
-        public string Nome { set; get; }
-        public long CategoriaId { get; set; }
-        public Categoria Categoria { get; set; }
-        public int CapacidadeMaxHabitats { get; set; }
-        public List<Habitat> Habitats { get; set; } = new List<Habitat>();
-
+        public virtual long Id { get; set; }
+        public virtual string Nome { get; set; }
+        public virtual long CategoriaId { get; set; }
+        public virtual Categoria Categoria { get; set; }
+        public virtual int CapacidadeMaxHabitats { get; set; }
+        public virtual IList<Habitat> Habitats { get; set; } = new List<Habitat>();
     }
 }
+

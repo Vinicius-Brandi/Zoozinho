@@ -20,5 +20,7 @@
 		<many-to-one name="DestinoHabitat" class="Habitat" column="destinohabitatid" />
 		<many-to-one name="DestinoGalpao" class="Galpao" column="destinogalpaoid" />
 	</class>
+
 </hibernate-mapping>
+
 

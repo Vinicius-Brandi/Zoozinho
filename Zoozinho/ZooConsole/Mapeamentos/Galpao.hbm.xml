@@ -18,5 +18,7 @@
 			<one-to-many class="Animal"/>
 		</bag>
 	</class>
+
 </hibernate-mapping>
+
 

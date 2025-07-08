@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZooConsole.Models
 {
@@ -11,25 +7,25 @@ namespace ZooConsole.Models
         Galpao,
         Habitat
     }
+
     public class Movimentacao
     {
-        public long Id { get; set; }
-        public DateTime DataHora { get; set; } = DateTime.Now;
-        public long AnimalId { get; set; }
-        public Animal Animal { get; set; }
+        public virtual long Id { get; set; }
+        public virtual DateTime DataHora { get; set; } = DateTime.Now;
+        public virtual long AnimalId { get; set; }
+        public virtual Animal Animal { get; set; }
 
-        public Localizacao Origem { get; set; }
-        public long? OrigemHabitatId { get; set; }
-        public Habitat OrigemHabitat { get; set; }
-        public long? OrigemGalpaoId { get; set; }
-        public Galpao OrigemGalpao { get; set; }
+        public virtual Localizacao Origem { get; set; }
+        public virtual long? OrigemHabitatId { get; set; }
+        public virtual Habitat OrigemHabitat { get; set; }
+        public virtual long? OrigemGalpaoId { get; set; }
+        public virtual Galpao OrigemGalpao { get; set; }
 
-        public Localizacao Destino { get; set; }
-        public long? DestinoHabitatId { get; set; }
-        public Habitat DestinoHabitat { get; set; }
-        public long? DestinoGalpaoId { get; set; }
-        public Galpao DestinoGalpao { get; set; }
-
-
+        public virtual Localizacao Destino { get; set; }
+        public virtual long? DestinoHabitatId { get; set; }
+        public virtual Habitat DestinoHabitat { get; set; }
+        public virtual long? DestinoGalpaoId { get; set; }
+        public virtual Galpao DestinoGalpao { get; set; }
     }
 }
+

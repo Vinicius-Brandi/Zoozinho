@@ -1,20 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NHibernate;
 using ZooConsole.Repository;
 using ZooConsole.Repository.Implementations;
 using ZooConsole.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<CategoriaService>();
 builder.Services.AddTransient<EspecieService>();
+builder.Services.AddTransient<RecintoService>();
 
-var isInMemory = builder.Configuration.GetValue("UseInMemory", false);
+var isInMemory = builder.Configuration.GetValue<bool>("UseInMemory");
 if (isInMemory)
 {
     builder.Services.AddTransient<IRepositorio, RepositoryInMemory>();
@@ -46,3 +53,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

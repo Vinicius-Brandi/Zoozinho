@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ZooConsole.Models
 {
     public class Galpao
     {
-        public long Id { get; set; }
-        public string Nome { get; set; } = "Galpão Principal";
-        public int CapacidadeMaxima { get; set; } = 10;
-        public List<Animal> Animais { get; set; } = new List<Animal>();
+        public virtual long Id { get; set; }
+        public virtual string Nome { get; set; } = "Galpão Principal";
+        public virtual int CapacidadeMaxima { get; set; } = 10;
+        public virtual IList<Animal> Animais { get; set; } = new List<Animal>();
     }
 }

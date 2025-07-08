@@ -20,4 +20,6 @@
 			<one-to-many class="Habitat"/>
 		</bag>
 	</class>
+
 </hibernate-mapping>
+

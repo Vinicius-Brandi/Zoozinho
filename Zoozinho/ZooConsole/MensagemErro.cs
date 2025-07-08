@@ -8,12 +8,13 @@ namespace ZooConsole
 {
     public class MensagemErro
     {
+        public string Propriedade { get; set; }
+        public string Mensagem { get; set; }
+
         public MensagemErro(string propriedade, string mensagem)
         {
-            this.propriedade = propriedade;
-            this.mensagem = mensagem;
+            Propriedade = propriedade;
+            Mensagem = mensagem;
         }
-        public string propriedade { get; set; }
-        public string mensagem { get; set; }
     }
 }

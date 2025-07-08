@@ -20,7 +20,7 @@
 		<one-to-one name="Recinto" class="Recinto" property-ref="Categoria" cascade="all" />
 	</class>
 
-
 </hibernate-mapping>
+
 
 

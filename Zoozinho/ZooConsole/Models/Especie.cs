@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ZooConsole.Models
 {
@@ -13,7 +9,12 @@ namespace ZooConsole.Models
         public virtual string Alimentacao { get; set; }
         public virtual string Comportamento { get; set; }
         public virtual Categoria Categoria { get; set; }
+
         public virtual Habitat? Habitat { get; set; }
-        public virtual List<Animal> Animais { get; set; } = new List<Animal>();
+
+        public virtual IList<Animal> Animais { get; set; } = new List<Animal>();
     }
 }
+
+
+

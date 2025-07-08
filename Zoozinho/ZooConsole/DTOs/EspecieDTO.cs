@@ -7,4 +7,11 @@
         public string Comportamento { get; set; }
         public long CategoriaId { get; set; }
     }
+
+    public class EspecieRelatorioDTO
+    {
+        public string Categoria { get; set; }
+        public int Quantidade { get; set; }
+    }
 }
+
