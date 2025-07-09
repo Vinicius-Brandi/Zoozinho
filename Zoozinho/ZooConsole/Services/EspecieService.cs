@@ -52,6 +52,25 @@ namespace ZooConsole.Services
                 return false;
             }
         }
+        public List<EspecieListagemDTO> Listar()
+        {
+            var especies = _repository.Consultar<Especie>().ToList();
+            return especies.Select(e => new EspecieListagemDTO
+            {
+                Id = e.Id,
+                Nome = e.Nome,
+                Alimentacao = e.Alimentacao,
+                Comportamento = e.Comportamento,
+                CategoriaNome = e.Categoria.Nome,
+                AnimaisNomes = e.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
+                HabitatNome = e.Habitat?.Nome ?? "Nenhum"
+
+            }).ToList();
+        }
+        public Especie BuscarPorId(long id)
+        {
+            return _repository.ConsultarPorId<Especie>(id);
+        }
 
         public bool Atualizar(long id, EspecieDTO dto, out List<MensagemErro> mensagens)
         {
@@ -116,22 +135,10 @@ namespace ZooConsole.Services
             return valido;
         }
 
-        public List<Especie> Consultar() =>
-            _repository.Consultar<Especie>().ToList();
-
-        public List<Especie> Consultar(string pesquisa) =>
-            _repository.Consultar<Especie>()
-                .Where(e =>
-                    e.Nome.Contains(pesquisa) ||
-                    e.Comportamento.Contains(pesquisa)
-                ).ToList();
-
-        public Especie ConsultarPorId(long id) =>
-            _repository.ConsultarPorId<Especie>(id);
 
         public Especie Deletar(long id)
         {
-            var especie = ConsultarPorId(id);
+            var especie = BuscarPorId(id);
             if (especie == null || especie.Animais.Any() || especie.Habitat != null)
                 return null;
 

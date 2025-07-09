@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ZooConsole.Models;
 using ZooConsole.Services;
+using ZooConsole.DTOs;
 
 namespace ZoozinhoAPI.Controllers
 {
@@ -16,10 +17,10 @@ namespace ZoozinhoAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] Categoria categoria)
+        public IActionResult Cadastrar([FromBody] CategoriaDTO dto)
         {
-            if (_servico.Cadastrar(categoria, out var erros))
-                return Ok(categoria);
+            if (_servico.Cadastrar(dto, out var erros))
+                return Ok(dto);
 
             return UnprocessableEntity(erros);
         }

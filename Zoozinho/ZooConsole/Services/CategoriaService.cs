@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using ZooConsole.DTOs;
 using ZooConsole.Models;
 using ZooConsole.Repository;
 
@@ -16,9 +17,13 @@ namespace ZooConsole.Services
             _repository = repository;
         }
 
-        public bool Cadastrar(Categoria categoria, out List<MensagemErro> mensagens)
+        public bool Cadastrar(CategoriaDTO dto, out List<MensagemErro> mensagens)
         {
             mensagens = new List<MensagemErro>();
+            var categoria = new Categoria
+            {
+                Nome = dto.Nome
+            };
 
             if (!Validar(categoria, out var mensagensValidacao))
             {
@@ -41,9 +46,21 @@ namespace ZooConsole.Services
             }
         }
 
-        public List<Categoria> Listar()
+        public List<CategoriaListagemDTO> Listar()
         {
-            return _repository.Consultar<Categoria>().ToList();
+            var categorias = _repository.Consultar<Categoria>().ToList();
+            return categorias.Select(c => new CategoriaListagemDTO
+            {
+                Id = c.Id,
+                Nome = c.Nome,
+                EspeciesNomes = c.Especies?.Select(e => e.Nome).ToList() ?? new List<string>(),
+                Recinto = c.Recinto == null ? null : new RecintoResumoDTO
+                {
+                    Id = c.Recinto.Id,
+                    Nome = c.Recinto.Nome,
+                    CapacidadeMaxHabitats = c.Recinto.CapacidadeMaxHabitats
+                }
+            }).ToList();
         }
 
         public Categoria? BuscarPorId(long id)

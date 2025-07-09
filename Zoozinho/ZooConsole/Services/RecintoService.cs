@@ -17,6 +17,7 @@ namespace ZooConsole.Services
         public List<Recinto> Listar()
         {
             return _repository.Consultar<Recinto>().ToList();
+
         }
 
         public Recinto? BuscarPorId(long id)
