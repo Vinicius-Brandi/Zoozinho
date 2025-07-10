@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZooConsole.DTOs
+﻿namespace ZooConsole.DTOs
 {
     public class HabitatDTO
     {
@@ -13,7 +7,15 @@ namespace ZooConsole.DTOs
         public long EspecieId { get; set; }
         public int MaxCapacidade { get; set; }
     }
-    public class HabitatResumoDTO
+
+    public class HabitatListagemDTO
     {
+        public long Id { get; set; }
+        public string Nome { get; set; }
+        public string RecintoNome { get; set; }
+        public string EspecieNome { get; set; }
+        public int MaxCapacidade { get; set; }
+        public int AnimaisCount { get; set; }
     }
 }
+

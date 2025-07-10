@@ -6,20 +6,20 @@ namespace ZooAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RecintoController : ControllerBase
+    public class HabitatController : ControllerBase
     {
-        private readonly RecintoService _servico;
+        private readonly HabitatService _servico;
 
-        public RecintoController(RecintoService servico)
+        public HabitatController(HabitatService servico)
         {
             _servico = servico;
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] RecintoDTO dto)
+        public IActionResult Cadastrar([FromBody] HabitatDTO dto)
         {
             if (_servico.Cadastrar(dto, out var erros))
-                return Ok(new { mensagem = "Recinto cadastrado com sucesso.", dto });
+                return Ok(new { mensagem = "Habitat cadastrado com sucesso.", dto });
 
             return UnprocessableEntity(erros);
         }
@@ -34,17 +34,17 @@ namespace ZooAPI.Controllers
         [HttpGet("{id:long}")]
         public IActionResult BuscarPorId(long id)
         {
-            var recinto = _servico.BuscarPorId(id);
-            return recinto == null
-                ? NotFound(new { mensagem = "Recinto não encontrado." })
-                : Ok(recinto);
+            var habitat = _servico.BuscarPorId(id);
+            return habitat == null
+                ? NotFound(new { erro = "Habitat não encontrado." })
+                : Ok(habitat);
         }
 
         [HttpPut("{id:long}")]
-        public IActionResult Atualizar(long id, [FromBody] RecintoDTO dto)
+        public IActionResult Atualizar(long id, [FromBody] HabitatDTO dto)
         {
             if (_servico.Atualizar(id, dto, out var erros))
-                return Ok(new { mensagem = "Recinto atualizado com sucesso.", dto });
+                return Ok(new { mensagem = "Habitat atualizado com sucesso.", dto });
 
             return UnprocessableEntity(erros);
         }
@@ -53,7 +53,7 @@ namespace ZooAPI.Controllers
         public IActionResult Deletar(long id, [FromQuery] bool forcar = false)
         {
             if (_servico.Deletar(id, out var erros, forcar))
-                return Ok(new { mensagem = "Recinto excluído com sucesso." });
+                return Ok(new { mensagem = "Habitat excluído com sucesso." });
 
             return UnprocessableEntity(erros);
         }

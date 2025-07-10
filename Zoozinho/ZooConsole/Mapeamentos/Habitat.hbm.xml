@@ -3,26 +3,30 @@
                    namespace="ZooConsole.Models"
                    assembly="ZooConsole">
 
-  <class name="Habitat" table="habitat" lazy="false">
-    <id name="Id" column="id" type="long">
-      <generator class="sequence">
-        <param name="sequence">habitat_seq</param>
-      </generator>
-    </id>
+	<class name="Habitat" table="habitat" lazy="false">
+		<id name="Id" column="id" type="long">
+			<generator class="sequence">
+				<param name="sequence">habitat_seq</param>
+			</generator>
+		</id>
 
-    <property name="Nome" column="nome" type="string" not-null="true"/>
-    <property name="MaxCapacidade" column="maxcapacidade" type="int" not-null="true"/>
+		<property name="Nome" column="nome" type="string" not-null="true"/>
+		<property name="MaxCapacidade" column="maxcapacidade" type="int" not-null="true"/>
 
-    <many-to-one name="Recinto" class="Recinto" column="recintoid" not-null="true"/>
-    <many-to-one name="Especie" class="Especie" column="especieid" not-null="true"/>
+		<property name="RecintoId" column="recintoid" type="long" insert="false" update="false"/>
+		<property name="EspecieId" column="especieid" type="long" insert="false" update="false"/>
 
-    <bag name="Animais" inverse="true" cascade="all-delete-orphan" lazy="false">
-      <key column="habitatid"/>
-      <one-to-many class="Animal"/>
-    </bag>
-  </class>
+		<many-to-one name="Recinto" class="Recinto" column="recintoid" not-null="true"/>
+		<many-to-one name="Especie" class="Especie" column="especieid" not-null="true"/>
+
+		<bag name="Animais" inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="habitatid"/>
+			<one-to-many class="Animal"/>
+		</bag>
+	</class>
 
 </hibernate-mapping>
+
 
 
 

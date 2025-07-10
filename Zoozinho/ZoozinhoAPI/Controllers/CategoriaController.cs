@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ZooConsole.Models;
-using ZooConsole.Services;
+using ZooConsole;
 using ZooConsole.DTOs;
+using ZooConsole.Services;
 
 namespace ZoozinhoAPI.Controllers
 {
@@ -20,7 +20,7 @@ namespace ZoozinhoAPI.Controllers
         public IActionResult Cadastrar([FromBody] CategoriaDTO dto)
         {
             if (_servico.Cadastrar(dto, out var erros))
-                return Ok(dto);
+                return Ok(new { mensagem = "Categoria Cadastrada", dto});
 
             return UnprocessableEntity(erros);
         }
@@ -43,23 +43,21 @@ namespace ZoozinhoAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult Atualizar([FromBody] Categoria categoria)
+        public IActionResult Atualizar(long id, [FromBody] CategoriaDTO dto)
         {
-            if (_servico.Atualizar(categoria, out var erros))
-                return Ok(categoria);
+            if (_servico.Atualizar(id, dto, out List<MensagemErro> erros))
+                return Ok(new {mensagem = "Categoria atualizada com Sucesso.", dto});
 
             return UnprocessableEntity(erros);
         }
 
         [HttpDelete("{id:long}")]
-        public IActionResult Excluir(long id, [FromQuery] bool forcar = false)
+        public IActionResult Deletar(long id, [FromQuery] bool forcar = false)
         {
-            if (_servico.Excluir(id, out var erros, forcar))
-                return NoContent();
+            if (_servico.Deletar(id, out var erros, forcar))
+                return Ok(new { mensagem = "Categoria excluída com sucesso." });
 
             return UnprocessableEntity(erros);
         }
     }
 }
-
-

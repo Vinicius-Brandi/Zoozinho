@@ -18,10 +18,12 @@ namespace ZooConsole.Services
         {
             mensagens = new List<MensagemErro>();
 
-            var categoria = _repository.ConsultarPorId<Categoria>(dto.CategoriaId);
-            if (categoria == null)
+            var categoria = ObterCategoria(dto.CategoriaId, mensagens);
+            if (categoria == null) return false;
+
+            if (ExisteEspecieComNome(dto.Nome))
             {
-                mensagens.Add(new MensagemErro("CategoriaId", $"Categoria com ID {dto.CategoriaId} não encontrada."));
+                mensagens.Add(new MensagemErro("Nome", "Já existe uma espécie cadastrada com este nome."));
                 return false;
             }
 
@@ -33,43 +35,9 @@ namespace ZooConsole.Services
                 Categoria = categoria
             };
 
-            var valido = Validar(especie, out var errosValidacao);
-            mensagens.AddRange(errosValidacao);
+            if (!Validar(especie, mensagens)) return false;
 
-            if (!valido)
-                return false;
-
-            try
-            {
-                using var transacao = _repository.IniciarTransacao();
-                _repository.Incluir(especie);
-                _repository.Commit();
-                return true;
-            }
-            catch
-            {
-                _repository.Rollback();
-                return false;
-            }
-        }
-        public List<EspecieListagemDTO> Listar()
-        {
-            var especies = _repository.Consultar<Especie>().ToList();
-            return especies.Select(e => new EspecieListagemDTO
-            {
-                Id = e.Id,
-                Nome = e.Nome,
-                Alimentacao = e.Alimentacao,
-                Comportamento = e.Comportamento,
-                CategoriaNome = e.Categoria.Nome,
-                AnimaisNomes = e.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
-                HabitatNome = e.Habitat?.Nome ?? "Nenhum"
-
-            }).ToList();
-        }
-        public Especie BuscarPorId(long id)
-        {
-            return _repository.ConsultarPorId<Especie>(id);
+            return Salvar(especie, mensagens, isNew: true);
         }
 
         public bool Atualizar(long id, EspecieDTO dto, out List<MensagemErro> mensagens)
@@ -83,10 +51,12 @@ namespace ZooConsole.Services
                 return false;
             }
 
-            var categoria = _repository.ConsultarPorId<Categoria>(dto.CategoriaId);
-            if (categoria == null)
+            var categoria = ObterCategoria(dto.CategoriaId, mensagens);
+            if (categoria == null) return false;
+
+            if (ExisteEspecieComNome(dto.Nome, id))
             {
-                mensagens.Add(new MensagemErro("CategoriaId", $"Categoria com ID {dto.CategoriaId} não encontrada."));
+                mensagens.Add(new MensagemErro("Nome", "Já existe uma espécie cadastrada com este nome."));
                 return false;
             }
 
@@ -95,36 +65,103 @@ namespace ZooConsole.Services
             especie.Comportamento = dto.Comportamento;
             especie.Categoria = categoria;
 
-            var valido = Validar(especie, out var errosValidacao);
-            mensagens.AddRange(errosValidacao);
+            if (!Validar(especie, mensagens)) return false;
 
-            if (!valido)
+            return Salvar(especie, mensagens, isNew: false);
+        }
+
+        public EspecieListagemDTO BuscarPorId(long id)
+        {
+            var especie = _repository.ConsultarPorId<Especie>(id);
+            if (especie == null) return null;
+
+            return new EspecieListagemDTO
+            {
+                Id = especie.Id,
+                Nome = especie.Nome,
+                Alimentacao = especie.Alimentacao,
+                Comportamento = especie.Comportamento,
+                CategoriaNome = especie.Categoria?.Nome ?? "Sem categoria",
+                AnimaisNomes = especie.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
+                HabitatNome = especie.Habitat?.Nome ?? "Nenhum"
+            };
+        }
+
+        public List<EspecieListagemDTO> Listar()
+        {
+            return _repository.Consultar<Especie>().ToList()
+                .Select(e => new EspecieListagemDTO
+                {
+                    Id = e.Id,
+                    Nome = e.Nome,
+                    Alimentacao = e.Alimentacao,
+                    Comportamento = e.Comportamento,
+                    CategoriaNome = e.Categoria.Nome,
+                    AnimaisNomes = e.Animais.Select(a => a.Nome).ToList(),
+                    HabitatNome = e.Habitat?.Nome ?? "Nenhum"
+                }).ToList();
+        }
+
+        public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
+        {
+            mensagens = new List<MensagemErro>();
+            var especie = _repository.ConsultarPorId<Especie>(id);
+            if (especie == null)
+            {
+                mensagens.Add(new MensagemErro("Id", "Espécie não encontrada."));
                 return false;
+            }
+
+            if (!forcar)
+            {
+                if (especie.Animais?.Any() == true)
+                    mensagens.Add(new MensagemErro("Animais", "Esta espécie possui animais associados."));
+                if (especie.Habitat != null)
+                    mensagens.Add(new MensagemErro("Habitat", "Esta espécie está associada a um habitat."));
+                if (mensagens.Any())
+                    return false;
+            }
 
             try
             {
                 using var transacao = _repository.IniciarTransacao();
-                _repository.Salvar(especie);
+                _repository.Excluir(especie);
                 _repository.Commit();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 _repository.Rollback();
+                mensagens.Add(new MensagemErro("Exception", $"Erro ao excluir espécie: {ex.Message}"));
                 return false;
             }
         }
 
-        public bool Validar(Especie especie, out List<MensagemErro> mensagens)
+
+        private Categoria ObterCategoria(long categoriaId, List<MensagemErro> mensagens)
+        {
+            var categoria = _repository.ConsultarPorId<Categoria>(categoriaId);
+            if (categoria == null)
+                mensagens.Add(new MensagemErro("CategoriaId", $"Categoria com ID {categoriaId} não encontrada."));
+            return categoria;
+        }
+
+        private bool ExisteEspecieComNome(string nome, long idExcluir = 0)
+        {
+            var nomeLower = nome.Trim().ToLower();
+            return _repository.Consultar<Especie>()
+                .Any(e => e.Nome.Trim().ToLower() == nomeLower && e.Id != idExcluir);
+        }
+
+        private bool Validar(Especie especie, List<MensagemErro> mensagens)
         {
             var contexto = new ValidationContext(especie);
             var erros = new List<ValidationResult>();
 
             bool valido = Validator.TryValidateObject(especie, contexto, erros, true);
 
-            mensagens = erros.Select(e =>
-                new MensagemErro(e.MemberNames.FirstOrDefault() ?? "Desconhecido", e.ErrorMessage)
-            ).ToList();
+            mensagens.AddRange(erros.Select(e =>
+                new MensagemErro(e.MemberNames.FirstOrDefault() ?? "Desconhecido", e.ErrorMessage)));
 
             if (especie.Categoria == null)
             {
@@ -135,24 +172,23 @@ namespace ZooConsole.Services
             return valido;
         }
 
-
-        public Especie Deletar(long id)
+        private bool Salvar(Especie especie, List<MensagemErro> mensagens, bool isNew)
         {
-            var especie = BuscarPorId(id);
-            if (especie == null || especie.Animais.Any() || especie.Habitat != null)
-                return null;
-
             try
             {
                 using var transacao = _repository.IniciarTransacao();
-                _repository.Excluir(especie);
+                if (isNew)
+                    _repository.Incluir(especie);
+                else
+                    _repository.Salvar(especie);
                 _repository.Commit();
-                return especie;
+                return true;
             }
             catch
             {
                 _repository.Rollback();
-                return null;
+                mensagens.Add(new MensagemErro("Exception", "Erro ao salvar a espécie."));
+                return false;
             }
         }
 
@@ -166,6 +202,6 @@ namespace ZooConsole.Services
                     Quantidade = g.Count()
                 }).ToList();
         }
+
     }
 }
-

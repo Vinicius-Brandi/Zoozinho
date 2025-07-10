@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<CategoriaService>();
 builder.Services.AddTransient<EspecieService>();
 builder.Services.AddTransient<RecintoService>();
+builder.Services.AddTransient<HabitatService>();
 
 var isInMemory = builder.Configuration.GetValue<bool>("UseInMemory");
 if (isInMemory)

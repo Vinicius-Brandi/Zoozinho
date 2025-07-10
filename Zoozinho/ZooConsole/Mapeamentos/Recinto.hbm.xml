@@ -13,13 +13,16 @@
 		<property name="Nome" column="nome" type="string" not-null="true" length="100" />
 		<property name="CapacidadeMaxHabitats" column="capacidademaxhabitats" type="int" not-null="true" />
 
+		<property name="CategoriaId" column="categoriaid" insert="false" update="false" />
+
 		<many-to-one name="Categoria" class="Categoria" column="categoriaid" unique="true" not-null="true" />
 
 		<bag name="Habitats" inverse="true" cascade="all-delete-orphan" lazy="false">
-			<key column="recintoid"/>
-			<one-to-many class="Habitat"/>
+			<key column="recintoid" />
+			<one-to-many class="Habitat" />
 		</bag>
 	</class>
 
 </hibernate-mapping>
+
 

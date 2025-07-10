@@ -20,80 +20,45 @@ namespace ZooConsole.Services
         public bool Cadastrar(CategoriaDTO dto, out List<MensagemErro> mensagens)
         {
             mensagens = new List<MensagemErro>();
-            var categoria = new Categoria
-            {
-                Nome = dto.Nome
-            };
 
-            if (!Validar(categoria, out var mensagensValidacao))
+            if (ExisteCategoriaComNome(dto.Nome))
             {
-                mensagens.AddRange(mensagensValidacao);
+                mensagens.Add(new MensagemErro("Nome", "Já existe uma categoria com esse nome."));
                 return false;
             }
 
-            try
-            {
-                using var transacao = _repository.IniciarTransacao();
-                _repository.Incluir(categoria);
-                _repository.Commit();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _repository.Rollback();
-                mensagens.Add(new MensagemErro("Exception", $"Erro ao salvar categoria: {ex.Message}"));
-                return false;
-            }
+            var categoria = new Categoria { Nome = dto.Nome };
+
+            if (!Validar(categoria, mensagens)) return false;
+
+            return Salvar(categoria, mensagens, isNew: true);
         }
 
-        public List<CategoriaListagemDTO> Listar()
-        {
-            var categorias = _repository.Consultar<Categoria>().ToList();
-            return categorias.Select(c => new CategoriaListagemDTO
-            {
-                Id = c.Id,
-                Nome = c.Nome,
-                EspeciesNomes = c.Especies?.Select(e => e.Nome).ToList() ?? new List<string>(),
-                Recinto = c.Recinto == null ? null : new RecintoResumoDTO
-                {
-                    Id = c.Recinto.Id,
-                    Nome = c.Recinto.Nome,
-                    CapacidadeMaxHabitats = c.Recinto.CapacidadeMaxHabitats
-                }
-            }).ToList();
-        }
-
-        public Categoria? BuscarPorId(long id)
-        {
-            return _repository.ConsultarPorId<Categoria>(id);
-        }
-
-        public bool Atualizar(Categoria categoria, out List<MensagemErro> mensagens)
+        public bool Atualizar(long id, CategoriaDTO dto, out List<MensagemErro> mensagens)
         {
             mensagens = new List<MensagemErro>();
 
-            if (!Validar(categoria, out var mensagensValidacao))
+            var categoria = _repository.ConsultarPorId<Categoria>(id);
+            if (categoria == null)
             {
-                mensagens.AddRange(mensagensValidacao);
+                mensagens.Add(new MensagemErro("Id", "Categoria não encontrada."));
                 return false;
             }
 
-            try
+            if (ExisteCategoriaComNome(dto.Nome, id))
             {
-                using var transacao = _repository.IniciarTransacao();
-                _repository.Salvar(categoria);
-                _repository.Commit();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _repository.Rollback();
-                mensagens.Add(new MensagemErro("Exception", $"Erro ao atualizar categoria: {ex.Message}"));
+                mensagens.Add(new MensagemErro("Nome", "Já existe uma categoria com esse nome."));
                 return false;
             }
+
+            categoria.Nome = dto.Nome;
+
+            if (!Validar(categoria, mensagens)) return false;
+
+            return Salvar(categoria, mensagens, isNew: false);
         }
 
-        public bool Excluir(long id, out List<MensagemErro> mensagens, bool forcar = false)
+        public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
         {
             mensagens = new List<MensagemErro>();
 
@@ -106,15 +71,11 @@ namespace ZooConsole.Services
 
             if (!forcar)
             {
-                if (categoria.Especies != null && categoria.Especies.Any())
-                {
+                if (categoria.Especies?.Any() == true)
                     mensagens.Add(new MensagemErro("Especies", "Esta categoria possui espécies associadas. Use '?forcar=true' para excluir mesmo assim."));
-                }
 
                 if (categoria.Recinto != null)
-                {
                     mensagens.Add(new MensagemErro("Recinto", "Esta categoria está vinculada a um recinto. Use '?forcar=true' para excluir mesmo assim."));
-                }
 
                 if (mensagens.Any())
                     return false;
@@ -135,21 +96,83 @@ namespace ZooConsole.Services
             }
         }
 
-        private bool Validar(Categoria categoria, out List<MensagemErro> mensagens)
+        public CategoriaListagemDTO? BuscarPorId(long id)
         {
-            mensagens = new List<MensagemErro>();
+            var c = _repository.ConsultarPorId<Categoria>(id);
+            if (c == null) return null;
+
+            return new CategoriaListagemDTO
+            {
+                Id = c.Id,
+                Nome = c.Nome,
+                EspeciesNomes = c.Especies?.Select(e => e.Nome).ToList() ?? new List<string>(),
+                Recinto = c.Recinto == null ? null : new RecintoResumoDTO
+                {
+                    Id = c.Recinto.Id,
+                    Nome = c.Recinto.Nome,
+                    CapacidadeMaxHabitats = c.Recinto.CapacidadeMaxHabitats
+                }
+            };
+        }
+
+        public List<CategoriaListagemDTO> Listar()
+        {
+            return _repository.Consultar<Categoria>().ToList()
+                .Select(c => new CategoriaListagemDTO
+                {
+                    Id = c.Id,
+                    Nome = c.Nome,
+                    EspeciesNomes = c.Especies?.Select(e => e.Nome).ToList() ?? new List<string>(),
+                    Recinto = c.Recinto == null ? null : new RecintoResumoDTO
+                    {
+                        Id = c.Recinto.Id,
+                        Nome = c.Recinto.Nome,
+                        CapacidadeMaxHabitats = c.Recinto.CapacidadeMaxHabitats
+                    }
+                })
+                .ToList();
+        }
+
+        private bool Validar(Categoria categoria, List<MensagemErro> mensagens)
+        {
             var contexto = new ValidationContext(categoria);
             var resultados = new List<ValidationResult>();
 
             bool valido = Validator.TryValidateObject(categoria, contexto, resultados, true);
 
-            foreach (var resultado in resultados)
-            {
-                var campo = resultado.MemberNames.FirstOrDefault() ?? "";
-                mensagens.Add(new MensagemErro(campo, resultado.ErrorMessage));
-            }
+            mensagens.AddRange(resultados.Select(r =>
+                new MensagemErro(r.MemberNames.FirstOrDefault() ?? "Desconhecido", r.ErrorMessage)));
 
             return valido;
+        }
+
+        private bool ExisteCategoriaComNome(string nome, long idExcluir = 0)
+        {
+            var nomeTrimmed = nome.Trim();
+            return _repository.Consultar<Categoria>()
+                .Any(c => c.Nome == nomeTrimmed && c.Id != idExcluir);
+        }
+
+        private bool Salvar(Categoria categoria, List<MensagemErro> mensagens, bool isNew)
+        {
+            try
+            {
+                using var transacao = _repository.IniciarTransacao();
+
+                if (isNew)
+                    _repository.Incluir(categoria);
+                else
+                    _repository.Salvar(categoria);
+
+                _repository.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _repository.Rollback();
+                mensagens.Add(new MensagemErro("Exception", $"Erro ao salvar categoria: {ex.Message}"));
+                return false;
+            }
         }
     }
 }

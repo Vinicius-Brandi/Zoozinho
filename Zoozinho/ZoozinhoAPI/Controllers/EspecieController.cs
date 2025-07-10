@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ZooConsole;
 using ZooConsole.DTOs;
-using ZooConsole.Models;
 using ZooConsole.Services;
 
 namespace ZooAPI.Controllers
@@ -20,8 +18,8 @@ namespace ZooAPI.Controllers
         [HttpPost]
         public IActionResult Cadastrar([FromBody] EspecieDTO dto)
         {
-            if (_servico.Cadastrar(dto, out List<MensagemErro> erros))
-                return Ok(dto);
+            if (_servico.Cadastrar(dto, out var erros))
+                return Ok(new { mensagem = "Espécie cadastrada com sucesso.", dto });
 
             return UnprocessableEntity(erros);
         }
@@ -33,34 +31,33 @@ namespace ZooAPI.Controllers
             return Ok(especies);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Atualizar(long id, [FromBody] EspecieDTO dto)
-        {
-            if (_servico.Atualizar(id, dto, out List<MensagemErro> erros))
-                return Ok(dto);
-
-            return UnprocessableEntity(erros);
-        }
-
         [HttpGet("{id}")]
         public IActionResult BuscarPorId(long id)
         {
             var especie = _servico.BuscarPorId(id);
-            if (especie == null)
-                return NotFound(new { mensagem = "Espécie não encontrada." });
+            return especie == null
+                ? NotFound(new { erro = "Espécie não encontrada." })
+                : Ok(especie);
+        }
 
-            return Ok(especie);
+        [HttpPut("{id}")]
+        public IActionResult Atualizar(long id, [FromBody] EspecieDTO dto)
+        {
+            if (_servico.Atualizar(id, dto, out var erros))
+                return Ok(new { mensagem = "Espécie atualizada com sucesso.", dto });
+
+            return UnprocessableEntity(erros);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Excluir(long id)
+        public IActionResult Deletar(long id, [FromQuery] bool forcar = false)
         {
-            var excluida = _servico.Deletar(id);
-            if (excluida == null)
-                return BadRequest(new { erro = "Não é possível excluir: espécie vinculada a habitat ou animais." });
+            if (_servico.Deletar(id, out var erros, forcar))
+                return Ok(new { mensagem = "Espécie excluída com sucesso." });
 
-            return Ok(excluida);
+            return UnprocessableEntity(erros);
         }
+
 
         [HttpGet("relatorio")]
         public IActionResult Relatorio()
@@ -70,5 +67,3 @@ namespace ZooAPI.Controllers
         }
     }
 }
-
-
