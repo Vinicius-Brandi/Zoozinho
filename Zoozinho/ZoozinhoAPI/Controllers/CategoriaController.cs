@@ -5,7 +5,7 @@ using ZooConsole.Services;
 
 namespace ZoozinhoAPI.Controllers
 {
-    [Route("api/categoria")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CategoriaController : ControllerBase
     {

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ZooConsole")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1853cdb02f315df72ab8e8e1f1c8b2d3ad4692f6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c046b64cdfcf8795060595c9f8f35bf4d376839a")]
 [assembly: System.Reflection.AssemblyProductAttribute("ZooConsole")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ZooConsole")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
