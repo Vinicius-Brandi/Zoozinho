@@ -11,8 +11,8 @@
 		</id>
 
 		<property name="Nome" column="nome" type="string" not-null="true" length="100" />
-		<property name="Alimentacao" column="alimentacao" type="string" />
-		<property name="Comportamento" column="comportamento" type="string" />
+		<property name="Alimentacao" column="alimentacao" type="int" not-null="true" />
+		<property name="Comportamento" column="comportamento" type="int" not-null="true" />
 
 		<many-to-one name="Categoria" class="Categoria" column="categoriaid" not-null="true" />
 

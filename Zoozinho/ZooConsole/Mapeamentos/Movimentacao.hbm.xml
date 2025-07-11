@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
                    namespace="ZooConsole.Models"
                    assembly="ZooConsole">
@@ -14,6 +14,12 @@
 		<property name="Origem" column="origem" type="int" not-null="true" />
 		<property name="Destino" column="destino" type="int" not-null="true" />
 
+		<property name="AnimalId" column="animalid" type="long" insert="false" update="false" />
+		<property name="OrigemHabitatId" column="origemhabitatid" type="long" insert="false" update="false" />
+		<property name="OrigemGalpaoId" column="origengalpaoid" type="long" insert="false" update="false" />
+		<property name="DestinoHabitatId" column="destinohabitatid" type="long" insert="false" update="false" />
+		<property name="DestinoGalpaoId" column="destinogalpaoid" type="long" insert="false" update="false" />
+
 		<many-to-one name="Animal" class="Animal" column="animalid" not-null="true" />
 		<many-to-one name="OrigemHabitat" class="Habitat" column="origemhabitatid" />
 		<many-to-one name="OrigemGalpao" class="Galpao" column="origengalpaoid" />
@@ -22,5 +28,6 @@
 	</class>
 
 </hibernate-mapping>
+
 
 

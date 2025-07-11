@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
                    namespace="ZooConsole.Models"
                    assembly="ZooConsole">
@@ -11,17 +11,20 @@
 		</id>
 
 		<property name="Nome" column="nome" type="string" not-null="true"/>
-		<property name="Sexo" column="sexo" type="string"/>
+		<property name="Sexo" column="sexo" type="int"/>
 		<property name="Idade" column="idade" type="int"/>
 		<property name="Peso" column="peso" type="decimal"/>
 
+		<property name="EspecieId" column="especieid" type="long" insert="false" update="false"/>
+		<property name="HabitatId" column="habitatid" type="long" insert="false" update="false"/>
+		<property name="GalpaoId" column="galpaoid" type="long" insert="false" update="false"/>
+
 		<many-to-one name="Especie" class="Especie" column="especieid" not-null="true"/>
-		<many-to-one name="Galpao" class="Galpao" column="galpaoid"/>
 		<many-to-one name="Habitat" class="Habitat" column="habitatid"/>
+		<many-to-one name="Galpao" class="Galpao" column="galpaoid"/>
 	</class>
 
 </hibernate-mapping>
-
 
 
 

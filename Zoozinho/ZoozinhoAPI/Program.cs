@@ -22,6 +22,8 @@ builder.Services.AddTransient<EspecieService>();
 builder.Services.AddTransient<RecintoService>();
 builder.Services.AddTransient<HabitatService>();
 builder.Services.AddTransient<GalpaoService>();
+builder.Services.AddTransient<AnimalService>();
+builder.Services.AddTransient<MovimentacaoService>();
 
 var isInMemory = builder.Configuration.GetValue<bool>("UseInMemory");
 if (isInMemory)

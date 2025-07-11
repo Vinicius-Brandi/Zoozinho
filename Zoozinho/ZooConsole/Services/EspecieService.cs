@@ -1,7 +1,8 @@
-﻿using ZooConsole.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+using ZooConsole.DTOs;
+using ZooConsole.Enum;
 using ZooConsole.Models;
 using ZooConsole.Repository;
-using System.ComponentModel.DataAnnotations;
 
 namespace ZooConsole.Services
 {
@@ -30,8 +31,8 @@ namespace ZooConsole.Services
             var especie = new Especie
             {
                 Nome = dto.Nome,
-                Alimentacao = dto.Alimentacao,
-                Comportamento = dto.Comportamento,
+                Alimentacao = (Alimentacao)dto.Alimentacao,
+                Comportamento = (Comportamento)dto.Comportamento,
                 Categoria = categoria
             };
 
@@ -61,8 +62,8 @@ namespace ZooConsole.Services
             }
 
             especie.Nome = dto.Nome;
-            especie.Alimentacao = dto.Alimentacao;
-            especie.Comportamento = dto.Comportamento;
+            especie.Alimentacao = (Alimentacao)dto.Alimentacao;
+            especie.Comportamento = (Comportamento)dto.Comportamento;
             especie.Categoria = categoria;
 
             if (!Validar(especie, mensagens)) return false;
@@ -79,9 +80,9 @@ namespace ZooConsole.Services
             {
                 Id = especie.Id,
                 Nome = especie.Nome,
-                Alimentacao = especie.Alimentacao,
-                Comportamento = especie.Comportamento,
-                CategoriaNome = especie.Categoria?.Nome ?? "Sem categoria",
+                Alimentacao = especie.Alimentacao.ToString(),
+                Comportamento = especie.Comportamento.ToString(),
+                CategoriaNome = especie.Categoria.Nome,
                 AnimaisNomes = especie.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
                 HabitatNome = especie.Habitat?.Nome ?? "Nenhum"
             };
@@ -94,8 +95,8 @@ namespace ZooConsole.Services
                 {
                     Id = e.Id,
                     Nome = e.Nome,
-                    Alimentacao = e.Alimentacao,
-                    Comportamento = e.Comportamento,
+                    Alimentacao = e.Alimentacao.ToString(),
+                    Comportamento = e.Comportamento.ToString(),
                     CategoriaNome = e.Categoria.Nome,
                     AnimaisNomes = e.Animais.Select(a => a.Nome).ToList(),
                     HabitatNome = e.Habitat?.Nome ?? "Nenhum"
@@ -136,7 +137,6 @@ namespace ZooConsole.Services
                 return false;
             }
         }
-
 
         private Categoria ObterCategoria(long categoriaId, List<MensagemErro> mensagens)
         {

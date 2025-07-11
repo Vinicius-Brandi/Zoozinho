@@ -28,8 +28,8 @@ CREATE TABLE recinto (
 CREATE TABLE especie (
     id BIGINT NOT NULL DEFAULT nextval('especie_seq'),
     nome VARCHAR(100) NOT NULL,
-    alimentacao VARCHAR(100),
-    comportamento VARCHAR(100),
+    alimentacao INT NOT NULL,
+    comportamento INT NOT NULL,
     categoriaid BIGINT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (categoriaid) REFERENCES categoria(id)
@@ -59,7 +59,7 @@ CREATE TABLE habitat (
 CREATE TABLE animal (
     id BIGINT NOT NULL DEFAULT nextval('animal_seq'),
     nome VARCHAR(100) NOT NULL,
-    sexo VARCHAR(10),
+    sexo INT NOT NULL,
     idade INT,
     peso NUMERIC(10,2),
     especieid BIGINT NOT NULL,

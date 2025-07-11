@@ -1,4 +1,5 @@
 ﻿using System;
+using ZooConsole.Enum;
 
 namespace ZooConsole.Models
 {
@@ -6,7 +7,7 @@ namespace ZooConsole.Models
     {
         public virtual long Id { get; set; }
         public virtual string Nome { get; set; }
-        public virtual string Sexo { get; set; }
+        public virtual SexoAnimal Sexo { get; set; }
         public virtual int Idade { get; set; }
         public virtual decimal Peso { get; set; }
 
