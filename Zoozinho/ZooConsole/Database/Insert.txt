@@ -1,0 +1,122 @@
+INSERT INTO categoria (nome) VALUES 
+('Mamíferos'),
+('Aves'),
+('Répteis');
+
+INSERT INTO recinto (nome, categoriaid, capacidademaxhabitats) VALUES
+('Recinto Mamíferos', 1, 5),
+('Recinto Aves', 2, 3),
+('Recinto Répteis', 3, 4);
+
+INSERT INTO especie (nome, alimentacao, comportamento, categoriaid) VALUES
+('Leão', 0, 0, 1),
+('Elefante', 1, 2, 1),
+('Águia', 0, 2, 2),
+('Pinguim', 1, 1, 2),
+('Cobra', 0, 0, 3),
+('Tartaruga', 1, 1, 3);
+
+INSERT INTO galpao (nome, capacidademaxima) VALUES
+('Galpão Principal', 10);
+
+INSERT INTO habitat (nome, recintoid, especieid, maxcapacidade) VALUES
+('Habitat Leão', 1, 1, 3),
+('Habitat Elefante', 1, 2, 2),
+('Habitat Águia', 2, 3, 4),
+('Habitat Pinguim', 2, 4, 5),
+('Habitat Cobra', 3, 5, 6),
+('Habitat Tartaruga', 3, 6, 3);
+
+INSERT INTO animal (nome, sexo, idade, peso, especieid, habitatid, galpaoid) VALUES
+('Simba', 0, 5, 190.5, 1, 1, NULL),
+('Nala', 1, 4, 180.2, 1, 1, NULL),
+('Mufasa', 0, 10, 210.7, 1, 1, NULL),
+
+('Dumbo', 0, 8, 4500.0, 2, 2, NULL),
+('Ella', 1, 6, 4800.3, 2, 2, NULL),
+
+('Águia Real', 0, 3, 6.4, 3, 3, NULL),
+('Águia Dourada', 1, 4, 5.8, 3, 3, NULL),
+
+('Pinguim Pingo', 0, 2, 12.5, 4, 4, NULL),
+('Pinguim Frio', 1, 3, 11.9, 4, 4, NULL),
+
+('Cobra Cascavel', 0, 7, 15.0, 5, 5, NULL),
+('Cobra Verde', 1, 5, 10.2, 5, 5, NULL),
+
+('Tartaruga Marinha', 1, 15, 120.0, 6, 6, NULL),
+('Tartaruga Terra', 0, 10, 85.3, 6, 6, NULL),
+
+-- Animais no galpão central (galpaoid = 1)
+('Leão Galpão1', 0, 6, 200.0, 1, NULL, 1),
+('Elefante Galpão1', 1, 12, 4700.5, 2, NULL, 1),
+('Águia Galpão1', 0, 5, 7.0, 3, NULL, 1),
+
+('Pinguim Galpão1', 1, 4, 12.0, 4, NULL, 1),
+('Cobra Galpão1', 0, 3, 14.0, 5, NULL, 1),
+
+-- Mais animais variados em habitat
+('Simba Jr.', 0, 1, 80.0, 1, 1, NULL),
+('Nala Jr.', 1, 1, 75.0, 1, 1, NULL),
+('Leãozinho', 0, 2, 110.0, 1, 1, NULL),
+
+('Elefantinho', 0, 3, 2000.0, 2, 2, NULL),
+('Elefantinha', 1, 2, 2100.0, 2, 2, NULL),
+
+('Águia Bebê', 0, 1, 3.2, 3, 3, NULL),
+
+('Pinguim Bebê', 1, 1, 5.0, 4, 4, NULL),
+
+('Cobra Bebê', 0, 1, 2.5, 5, 5, NULL),
+
+('Tartaruga Bebê', 1, 1, 30.0, 6, 6, NULL),
+
+('Galpão Leão', 0, 8, 195.0, 1, NULL, 1),
+('Galpão Elefante', 1, 7, 4600.0, 2, NULL, 1);
+
+INSERT INTO movimentacao (animalid, origem, destino, origemhabitatid, origengalpaoid, destinohabitatid, destinogalpaoid) VALUES
+(1, 0, 1, NULL, NULL, 1, NULL),
+(2, 0, 1, NULL, NULL, 1, NULL),
+(3, 0, 1, NULL, NULL, 1, NULL),
+
+(4, 0, 1, NULL, NULL, 2, NULL),
+(5, 0, 1, NULL, NULL, 2, NULL),
+
+(6, 0, 1, NULL, NULL, 3, NULL),
+(7, 0, 1, NULL, NULL, 3, NULL),
+
+(8, 0, 1, NULL, NULL, 4, NULL),
+(9, 0, 1, NULL, NULL, 4, NULL),
+
+(10, 0, 1, NULL, NULL, 5, NULL),
+(11, 0, 1, NULL, NULL, 5, NULL),
+
+(12, 0, 1, NULL, NULL, 6, NULL),
+(13, 0, 1, NULL, NULL, 6, NULL),
+
+-- Animais no galpão central
+(14, 0, 0, NULL, NULL, NULL, 1),
+(15, 0, 0, NULL, NULL, NULL, 1),
+(16, 0, 0, NULL, NULL, NULL, 1),
+(17, 0, 0, NULL, NULL, NULL, 1),
+(18, 0, 0, NULL, NULL, NULL, 1),
+
+-- Mais animais em habitat
+(19, 0, 1, NULL, NULL, 1, NULL),
+(20, 0, 1, NULL, NULL, 1, NULL),
+(21, 0, 1, NULL, NULL, 1, NULL),
+
+(22, 0, 1, NULL, NULL, 2, NULL),
+(23, 0, 1, NULL, NULL, 2, NULL),
+
+(24, 0, 1, NULL, NULL, 3, NULL),
+
+(25, 0, 1, NULL, NULL, 4, NULL),
+
+(26, 0, 1, NULL, NULL, 5, NULL),
+
+(27, 0, 1, NULL, NULL, 6, NULL),
+
+(28, 0, 0, NULL, NULL, NULL, 1),
+(29, 0, 0, NULL, NULL, NULL, 1);
+
