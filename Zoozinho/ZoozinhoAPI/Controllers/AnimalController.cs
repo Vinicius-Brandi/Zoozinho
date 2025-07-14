@@ -25,11 +25,12 @@ namespace ZoozinhoAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult Listar([FromQuery] int skip = 0, [FromQuery] int pageSize = 10)
         {
-            var lista = _servico.Listar();
+            var lista = _servico.Listar(skip, pageSize);
             return Ok(lista);
         }
+
 
         [HttpGet("{id:long}")]
         public IActionResult BuscarPorId(long id)
@@ -40,6 +41,14 @@ namespace ZoozinhoAPI.Controllers
 
             return Ok(animal);
         }
+
+        [HttpGet("{id:long}/movimentacoes")]
+        public IActionResult ListarMovimentacoes(long id, [FromQuery] int skip = 0, [FromQuery] int pageSize = 10)
+        {
+            var movimentacoes = _servico.ListarMovimentacoes(id, skip, pageSize);
+            return Ok(movimentacoes);
+        }
+
 
         [HttpPut("{id:long}")]
         public IActionResult Atualizar(long id, [FromBody] AnimalDTO dto)

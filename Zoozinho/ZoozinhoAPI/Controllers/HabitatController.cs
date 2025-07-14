@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ZooConsole.DTOs;
+using ZooConsole.DTOs.ZooConsole.DTOs.ZooConsole.DTOs;
 using ZooConsole.Services;
 
 namespace ZooAPI.Controllers
@@ -27,16 +28,16 @@ namespace ZooAPI.Controllers
         [HttpGet]
         public IActionResult Listar()
         {
-            var lista = _servico.Listar();
-            return Ok(lista);
+            var habitats = _servico.Listar();
+            return Ok(habitats);
         }
 
-        [HttpGet("{id:long}")]
+        [HttpGet("{id}")]
         public IActionResult BuscarPorId(long id)
         {
             var habitat = _servico.BuscarPorId(id);
             return habitat == null
-                ? NotFound(new { erro = "Habitat não encontrado." })
+                ? NotFound(new { erro = "Habitat não encontrada." })
                 : Ok(habitat);
         }
 

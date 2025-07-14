@@ -186,9 +186,17 @@ namespace ZooConsole.Services
             };
         }
 
-        public List<AnimalListagemDTO> Listar()
+        public List<AnimalListagemDTO> Listar(int skip = 0, int pageSize = 10)
         {
-            return _repository.Consultar<Animal>().ToList()
+            var query = _repository.Consultar<Animal>();
+
+            if (skip > 0)
+                query = query.Skip(skip);
+
+            if (pageSize > 0)
+                query = query.Take(pageSize);
+
+            return query.ToList()
                 .Select(a => new AnimalListagemDTO
                 {
                     Id = a.Id,
@@ -203,6 +211,24 @@ namespace ZooConsole.Services
                 })
                 .ToList();
         }
+
+        public List<MovimentacaoDTO> ListarMovimentacoes(long animalId, int skip = 0, int pageSize = 10)
+        {
+            var movimentacoes = _movimentacaoService.ListarPorAnimal(animalId, skip, pageSize);
+
+            return movimentacoes.Select(m => new MovimentacaoDTO
+            {
+                Id = m.Id,
+                DataHora = m.DataHora,
+                Origem = m.Origem,
+                OrigemHabitatNome = m.OrigemHabitat?.Nome,
+                OrigemGalpaoNome = m.OrigemGalpao?.Nome,
+                Destino = m.Destino,
+                DestinoHabitatNome = m.DestinoHabitat?.Nome,
+                DestinoGalpaoNome = m.DestinoGalpao?.Nome
+            }).ToList();
+        }
+
 
         public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
         {

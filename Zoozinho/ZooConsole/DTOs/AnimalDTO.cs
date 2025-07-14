@@ -5,7 +5,7 @@ namespace ZooConsole.DTOs
     public class AnimalDTO
     {
         public string Nome { get; set; }
-        public SexoAnimal Sexo { get; set; }  // Agora com enum diretamente
+        public SexoAnimal Sexo { get; set; }
         public int Idade { get; set; }
         public decimal Peso { get; set; }
         public long EspecieId { get; set; }

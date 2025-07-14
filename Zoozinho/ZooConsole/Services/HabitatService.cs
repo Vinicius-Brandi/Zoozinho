@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ZooConsole.DTOs;
+using ZooConsole.DTOs.ZooConsole.DTOs.ZooConsole.DTOs;
 using ZooConsole.Models;
 using ZooConsole.Repository;
 
@@ -60,9 +61,41 @@ namespace ZooConsole.Services
             return Salvar(habitat, mensagens, isNew: false);
         }
 
-        public Habitat? BuscarPorId(long id) => _repository.ConsultarPorId<Habitat>(id);
+        public HabitatListagemDTO? BuscarPorId(long id)
+        {
+            var habitat = _repository.ConsultarPorId<Habitat>(id);
+            if (habitat == null) return null;
 
-        public List<Habitat> Listar() => _repository.Consultar<Habitat>().ToList();
+            return new HabitatListagemDTO
+            {
+                Id = habitat.Id,
+                Nome = habitat.Nome,
+                RecintoId = habitat.RecintoId,
+                RecintoNome = habitat.Recinto.Nome,
+                EspecieId = habitat.EspecieId,
+                EspecieNome = habitat.Especie.Nome,
+                MaxCapacidade = habitat.MaxCapacidade,
+                AnimaisNomes = habitat.Animais?.Select(a => a.Nome).ToList() ?? new List<string>()
+            };
+        }
+
+
+        public List<HabitatListagemDTO> Listar()
+        {
+            return _repository.Consultar<Habitat>().ToList()
+                .Select(h => new HabitatListagemDTO
+                {
+                    Id = h.Id,
+                    Nome = h.Nome,
+                    RecintoId = h.RecintoId,
+                    RecintoNome = h.Recinto.Nome,
+                    EspecieId = h.EspecieId,
+                    EspecieNome = h.Especie.Nome,
+                    MaxCapacidade = h.MaxCapacidade,
+                    AnimaisNomes = h.Animais.Select(a => a.Nome).ToList()
+                }).ToList();
+        }
+
 
         public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
         {

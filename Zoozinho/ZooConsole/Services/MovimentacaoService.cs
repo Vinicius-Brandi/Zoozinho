@@ -1,7 +1,7 @@
 ﻿using ZooConsole.Models;
 using ZooConsole.Repository;
 using ZooConsole.Enum;
-
+using System;
 namespace ZooConsole.Services
 {
     public class MovimentacaoService
@@ -35,6 +35,21 @@ namespace ZooConsole.Services
             using var transacao = _repository.IniciarTransacao();
             _repository.Incluir(movimentacao);
             _repository.Commit();
+        }
+
+        public List<Movimentacao> ListarPorAnimal(long animalId, int skip = 0, int pageSize = 10)
+        {
+            IQueryable<Movimentacao> query = _repository.Consultar<Movimentacao>()
+                                             .Where(m => m.AnimalId == animalId)
+                                             .OrderByDescending(m => m.DataHora);
+
+            if (skip > 0)
+                query = query.Skip(skip);
+
+            if (pageSize > 0)
+                query = query.Take(pageSize);
+
+            return query.ToList();
         }
     }
 }
