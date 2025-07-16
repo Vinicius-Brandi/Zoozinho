@@ -22,6 +22,11 @@
 		<many-to-one name="Especie" class="Especie" column="especieid" not-null="true"/>
 		<many-to-one name="Habitat" class="Habitat" column="habitatid"/>
 		<many-to-one name="Galpao" class="Galpao" column="galpaoid"/>
+
+		<bag name="Movimentacoes" inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="animalid"/>
+			<one-to-many class="Movimentacao"/>
+		</bag>
 	</class>
 
 </hibernate-mapping>

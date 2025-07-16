@@ -19,6 +19,7 @@ namespace ZooConsole.Models
 
         public virtual long? GalpaoId { get; set; }
         public virtual Galpao Galpao { get; set; }
+        public virtual IList<Movimentacao> Movimentacoes { get; set; } = new List<Movimentacao>();
 
         public virtual string Localizacao =>
             Galpao != null ? Galpao.Nome :

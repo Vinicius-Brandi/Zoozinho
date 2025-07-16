@@ -3,12 +3,13 @@ import { URL_API } from "./config";
 
 const url_animal = `${URL_API}/animal`
 
-export async function listarAnimais(skip = 0, pageSize = 10) {
+export async function listarAnimais(skip = 0, pageSize = 6) {
     const url = `${url_animal}?skip=${skip}&pageSize=${pageSize}`;
     const response = await fetch(url);
-    if (!response.ok) throw new Error('Erro ao listar animais');
-    return await response.json();
+    if (!response.ok) throw new Error("Erro ao listar animais");
+    return await response.json(); 
 }
+
 
 export async function buscarAnimalPorId(id){
     const url = `${url_animal}/${id}`;

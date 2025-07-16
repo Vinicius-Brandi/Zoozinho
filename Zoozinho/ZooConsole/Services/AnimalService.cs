@@ -162,8 +162,11 @@ namespace ZooConsole.Services
 
             if (!Salvar(animal, mensagens, isNew: false))
                 return false;
+            if (origemHabitat?.Id != habitat?.Id || origemGalpao?.Id != galpao?.Id)
+            {
+                _movimentacaoService.RegistrarMovimentacao(animal, origemHabitat, origemGalpao, habitat, galpao);
+            }
 
-            _movimentacaoService.RegistrarMovimentacao(animal, origemHabitat, origemGalpao, habitat, galpao);
             return true;
         }
 
@@ -176,41 +179,60 @@ namespace ZooConsole.Services
             {
                 Id = animal.Id,
                 Nome = animal.Nome,
-                Sexo = animal.Sexo,
+                Sexo = animal.Sexo.ToString(),
                 Idade = animal.Idade,
                 Peso = animal.Peso,
+                EspecieId = animal.Especie.Id,
                 EspecieNome = animal.Especie.Nome,
-                HabitatNome = animal.Habitat?.Nome ?? "Nenhum",
-                GalpaoNome = animal.Galpao?.Nome ?? "Nenhum",
+                HabitatId = animal.Habitat?.Id,
+                HabitatNome = animal.Habitat?.Nome,
+                GalpaoId = animal.Galpao?.Id,
+                GalpaoNome = animal.Galpao?.Nome,
                 Localizacao = animal.Localizacao
             };
         }
 
-        public List<AnimalListagemDTO> Listar(int skip = 0, int pageSize = 10)
+
+        public TotalAnimais<AnimalListagemDTO> Listar(int skip = 0, int pageSize = 10)
         {
-            var query = _repository.Consultar<Animal>();
+            IQueryable<Animal> query = _repository.Consultar<Animal>().OrderBy(a => a.Id);
+            int total = query.Count();
 
             if (skip > 0)
+            {
                 query = query.Skip(skip);
+            }
 
             if (pageSize > 0)
+            {
                 query = query.Take(pageSize);
+            }
 
-            return query.ToList()
-                .Select(a => new AnimalListagemDTO
+            var itens = query.ToList()
+                .Select(animal => new AnimalListagemDTO
                 {
-                    Id = a.Id,
-                    Nome = a.Nome,
-                    Sexo = a.Sexo,
-                    Idade = a.Idade,
-                    Peso = a.Peso,
-                    EspecieNome = a.Especie.Nome,
-                    HabitatNome = a.Habitat?.Nome ?? "Nenhum",
-                    GalpaoNome = a.Galpao?.Nome ?? "Nenhum",
-                    Localizacao = a.Localizacao
-                })
-                .ToList();
+                    Id = animal.Id,
+                    Nome = animal.Nome,
+                    Sexo = animal.Sexo.ToString(),
+                    Idade = animal.Idade,
+                    Peso = animal.Peso,
+                    EspecieId = animal.Especie.Id,
+                    EspecieNome = animal.Especie.Nome,
+                    HabitatId = animal.Habitat?.Id,
+                    HabitatNome = animal.Habitat?.Nome,
+                    GalpaoId = animal.Galpao?.Id,
+                    GalpaoNome = animal.Galpao?.Nome,
+                    Localizacao = animal.Localizacao
+                }).ToList();
+
+            return new TotalAnimais<AnimalListagemDTO>
+            {
+                Total = total,
+                Itens = itens
+            };
         }
+
+
 
         public List<MovimentacaoDTO> ListarMovimentacoes(long animalId, int skip = 0, int pageSize = 10)
         {
@@ -243,6 +265,15 @@ namespace ZooConsole.Services
             try
             {
                 using var transacao = _repository.IniciarTransacao();
+                if (animal.Especie != null)
+                    animal.Especie.Animais.Remove(animal);
+                if (animal.Habitat != null)
+                    animal.Habitat.Animais.Remove(animal);
+                if (animal.Galpao != null)
+                    animal.Galpao.Animais.Remove(animal);
+
+                animal.Movimentacoes.Clear();
+
                 _repository.Excluir(animal);
                 _repository.Commit();
                 return true;
@@ -254,6 +285,8 @@ namespace ZooConsole.Services
                 return false;
             }
         }
+
+
 
         private bool ValidarAlocacaoAnimal(long especieId, Habitat habitat, Galpao galpao, List<MensagemErro> mensagens, long idAtualizar = 0)
         {

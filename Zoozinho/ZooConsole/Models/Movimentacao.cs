@@ -11,7 +11,7 @@ namespace ZooConsole.Models
         public virtual long AnimalId { get; set; }
         public virtual Animal Animal { get; set; }
 
-        public virtual Localizacao Origem { get; set; }
+        public virtual Localizacao? Origem { get; set; }
         public virtual long? OrigemHabitatId { get; set; }
         public virtual Habitat OrigemHabitat { get; set; }
 

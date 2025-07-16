@@ -6,7 +6,7 @@ namespace ZooConsole.DTOs
     {
         public long Id { get; set; }
         public DateTime DataHora { get; set; }
-        public Localizacao Origem { get; set; }
+        public Localizacao? Origem { get; set; }
         public string OrigemHabitatNome { get; set; }
         public string OrigemGalpaoNome { get; set; }
         public Localizacao Destino { get; set; }

@@ -1,0 +1,14 @@
+.lista-movimentacoes {
+  margin-top: 30px;
+}
+
+.lista-movimentacoes table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lista-movimentacoes th, 
+.lista-movimentacoes td {
+  padding: 8px;
+  text-align: left;
+}

@@ -11,8 +11,8 @@
 		</id>
 
 		<property name="DataHora" column="datahora" type="timestamp" not-null="true" />
-		<property name="Origem" column="origem" type="int" not-null="true" />
-		<property name="Destino" column="destino" type="int" not-null="true" />
+		<property name="Origem" column="origem" type="ZooConsole.Enum.Localizacao, ZooConsole" not-null="false" />
+		<property name="Destino" column="destino" type="ZooConsole.Enum.Localizacao, ZooConsole" not-null="true" />
 
 		<property name="AnimalId" column="animalid" type="long" insert="false" update="false" />
 		<property name="OrigemHabitatId" column="origemhabitatid" type="long" insert="false" update="false" />

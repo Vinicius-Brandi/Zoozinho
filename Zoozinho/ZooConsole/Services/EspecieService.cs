@@ -82,7 +82,7 @@ namespace ZooConsole.Services
                 Nome = especie.Nome,
                 Alimentacao = especie.Alimentacao.ToString(),
                 Comportamento = especie.Comportamento.ToString(),
-                CategoriaNome = especie.Categoria.Nome,
+                CategoriaId = especie.Categoria.Id,
                 AnimaisNomes = especie.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
                 HabitatNome = especie.Habitat?.Nome ?? "Nenhum"
             };
@@ -97,11 +97,12 @@ namespace ZooConsole.Services
                     Nome = e.Nome,
                     Alimentacao = e.Alimentacao.ToString(),
                     Comportamento = e.Comportamento.ToString(),
-                    CategoriaNome = e.Categoria.Nome,
-                    AnimaisNomes = e.Animais.Select(a => a.Nome).ToList(),
+                    CategoriaId = e.Categoria.Id,
+                    AnimaisNomes = e.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
                     HabitatNome = e.Habitat?.Nome ?? "Nenhum"
                 }).ToList();
         }
+
 
         public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
         {

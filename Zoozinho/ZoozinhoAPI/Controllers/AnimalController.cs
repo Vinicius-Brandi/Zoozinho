@@ -25,7 +25,7 @@ namespace ZoozinhoAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar([FromQuery] int skip = 0, [FromQuery] int pageSize = 10)
+        public IActionResult Listar([FromQuery] int skip = 0, [FromQuery] int pageSize = 6)
         {
             var lista = _servico.Listar(skip, pageSize);
             return Ok(lista);
