@@ -1,0 +1,48 @@
+header {
+  background-color: #4CAF50;
+  padding: 10px 20px;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.menu {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+.menu > li {
+  position: relative;
+}
+
+.menu a, .menu span {
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #374151;
+  min-width: 160px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  padding: 10px 0;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.dropdown-content li {
+  padding: 8px 16px;
+}
+
+.dropdown-content li a {
+  color: white;
+  display: block;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}

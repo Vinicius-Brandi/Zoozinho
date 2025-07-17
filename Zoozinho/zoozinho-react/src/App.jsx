@@ -4,10 +4,12 @@ import CadastroCategoria from './pages/Categorias/cadastroCategoria';
 import CadastroEspecie from './pages/Especies/cadastroEspecie';
 import PerfilAnimal from './pages/Animais/perfilAnimal';
 import ListaAnimais from './pages/Animais/listaAnimais';
+import { Menu } from './pages/Gerais/menu';
 
 function App() {
   return (
     <BrowserRouter>
+    {<Menu />}
       <Routes>
 
         <Route path="/animais" element={<ListaAnimais />} />
