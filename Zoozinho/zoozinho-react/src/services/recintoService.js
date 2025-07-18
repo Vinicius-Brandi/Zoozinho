@@ -15,11 +15,13 @@ export async function cadastrarRecinto(recintoDTO) {
     return await response.json();
 }
 
-export async function listarRecintos() {
-    const response = await fetch(url_recinto);
+export async function listarRecintos(skip = 0, pageSize = 6) {
+    const url = `${url_recinto}?skip=${skip}&pageSize=${pageSize}`;
+    const response = await fetch(url);
     if (!response.ok) throw new Error("Erro ao listar recintos");
     return await response.json();
 }
+
 
 export async function buscarRecintoPorId(id) {
     const response = await fetch(`${url_recinto}/${id}`);

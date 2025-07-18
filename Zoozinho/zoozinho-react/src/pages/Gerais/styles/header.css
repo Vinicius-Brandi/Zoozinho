@@ -50,13 +50,12 @@ header {
   display: block;
 }
 
-/* Estilo para submenu (dropdown-content-2) */
 .dropdown-content-2 {
   display: none;
   position: absolute;
   top: 0;
   left: 100%;
-  background-color: #4B5563; /* cor um pouco diferente para distinguir */
+  background-color: #4B5563;
   min-width: 160px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   padding: 10px 0;

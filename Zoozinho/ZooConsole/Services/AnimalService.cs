@@ -193,7 +193,7 @@ namespace ZooConsole.Services
         }
 
 
-        public TotalAnimais<AnimalListagemDTO> Listar(int skip = 0, int pageSize = 10)
+        public TotalItens<AnimalListagemDTO> Listar(int skip = 0, int pageSize = 10)
         {
             IQueryable<Animal> query = _repository.Consultar<Animal>().OrderBy(a => a.Id);
             int total = query.Count();
@@ -225,7 +225,7 @@ namespace ZooConsole.Services
                     Localizacao = animal.Localizacao
                 }).ToList();
 
-            return new TotalAnimais<AnimalListagemDTO>
+            return new TotalItens<AnimalListagemDTO>
             {
                 Total = total,
                 Itens = itens

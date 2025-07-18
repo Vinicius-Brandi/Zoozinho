@@ -1,22 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import RelatorioGeral from "../Gerais/relatorio";
 import { mostrarRelatorioRecinto } from "../../services/recintoService";
 
 export default function RelatorioRecinto() {
   const { id } = useParams();
-  const [NomeRecinto, setNomeRecinto] = useState("");
+  const [nomeRecinto, setNomeRecinto] = useState(null);
+  const [relatorioData, setRelatorioData] = useState(null);
 
-  const fetchData = () =>
+  useEffect(() => {
     mostrarRelatorioRecinto(id).then((relatorio) => {
-      setNomeRecinto(relatorio.NomeRecinto);
-      return relatorio;
+      setNomeRecinto(relatorio.nomeRecinto || "Recinto");
+      setRelatorioData(relatorio);
     });
+  }, [id]);
+
+  if (!relatorioData) {
+    return <p>Carregando relatório...</p>;
+  }
 
   return (
     <RelatorioGeral
-      fetchData={fetchData}
-      titulo={`Relatório ${NomeRecinto}`}
+      fetchData={() => Promise.resolve(relatorioData)}
+      titulo={`Relatório de ${nomeRecinto}`}
     />
   );
 }

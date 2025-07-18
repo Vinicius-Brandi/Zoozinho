@@ -25,7 +25,13 @@ export function Menu() {
                   <li><Link to="/galpao/relatorio">Relatorio</Link></li>
                 </ul>
                 </li>
-              <li><Link to="/recintos">Recintos</Link></li>
+              <li>Recintos
+                <ul className="dropdown-content-2">
+                  <li><Link to="/recintos/cadastro">Cadastrar</Link></li>
+                  <li><Link to="/recintos">Visualizar</Link></li>
+                </ul>
+
+              </li>
             </ul>
           </li>
 

@@ -33,7 +33,7 @@ namespace ZooConsole.DTOs
         public string Localizacao { get; set; }
     }
 
-    public class TotalAnimais<T>
+    public class TotalItens<T>
     {
         public int Total { get; set; }
         public List<T> Itens { get; set; }

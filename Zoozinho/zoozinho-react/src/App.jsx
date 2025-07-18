@@ -9,6 +9,9 @@ import EditarGalpao from './pages/Galpao/editarGalpao';
 import RelatorioGalpao from './pages/Galpao/relatorioGalpao';
 import RelatorioRecinto from './pages/Recintos/relatorioRecinto';
 import CadastroRecinto from './pages/Recintos/cadastroRecinto';
+import ListaRecinto from './pages/Recintos/listaRecinto';
+import PerfilRecinto from './pages/Recintos/perfilRecinto';
+import CadastroHabitat from './pages/Habitats/cadastroHabitat';
 
 function App() {
   return (
@@ -30,9 +33,14 @@ function App() {
 
         <Route path="/recintos/relatorio/:id" element={<RelatorioRecinto/>} />
         <Route path="/recintos/cadastro" element={<CadastroRecinto/>}/>
-        <Route path="/recinto/editar/:id" element={<CadastroRecinto/>}/>
+        <Route path="/recintos/editar/:id" element={<CadastroRecinto/>}/>
+        <Route path="/recintos" element={<ListaRecinto/>}/>
+        <Route path="/recintos/perfil/:id" element={<PerfilRecinto />} />
 
         <Route path="/animais/perfil/:id" element={<PerfilAnimal />} />
+
+        <Route path="/habitats/cadastro" element={<CadastroHabitat/>}/>
+        <Route path="/habitats/editar/:id" element={<CadastroHabitat/>}/>
 
 
       </Routes>

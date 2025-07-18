@@ -1,0 +1,31 @@
+.perfil-animal {
+  padding: 20px;
+  max-width: 700px;
+  border-radius: 8px;
+}
+
+.button-area {
+  margin-top: 20px;
+}
+
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}

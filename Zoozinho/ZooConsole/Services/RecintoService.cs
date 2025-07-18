@@ -91,23 +91,41 @@ namespace ZooConsole.Services
                 Id = r.Id,
                 Nome = r.Nome,
                 CategoriaId = r.CategoriaId,
-                CategoriaNome = r.Categoria?.Nome ?? "Sem categoria",
+                CategoriaNome = r.Categoria.Nome,
                 CapacidadeMaxHabitats = r.CapacidadeMaxHabitats
             };
         }
 
-        public List<RecintoListagemDTO> Listar()
+        public TotalItens<RecintoListagemDTO> Listar(int skip = 0, int pageSize = 10)
         {
-            return _repository.Consultar<Recinto>().ToList()
-                .Select(r => new RecintoListagemDTO
+            IQueryable<Recinto> query = _repository.Consultar<Recinto>().OrderBy(r => r.Id);
+            int total = query.Count();
+
+            if (skip > 0)
+            {
+                query = query.Skip(skip);
+            }
+
+            if (pageSize > 0)
+            {
+                query = query.Take(pageSize);
+            }
+
+            var itens = query.ToList()
+                .Select(recinto => new RecintoListagemDTO
                 {
-                    Id = r.Id,
-                    Nome = r.Nome,
-                    CategoriaId = r.CategoriaId,
-                    CategoriaNome = r.Categoria?.Nome ?? "Sem categoria",
-                    CapacidadeMaxHabitats = r.CapacidadeMaxHabitats
-                })
-                .ToList();
+                    Id = recinto.Id,
+                    Nome = recinto.Nome,
+                    CategoriaId = recinto.Categoria.Id,
+                    CategoriaNome = recinto.Categoria.Nome,
+                    CapacidadeMaxHabitats = recinto.CapacidadeMaxHabitats
+                }).ToList();
+
+            return new TotalItens<RecintoListagemDTO>
+            {
+                Total = total,
+                Itens = itens
+            };
         }
 
         public RecintoRelatorioDTO Relatorio(long recintoId)
@@ -166,14 +184,21 @@ namespace ZooConsole.Services
 
             if (!forcar && recinto.Habitats?.Any() == true)
             {
-                mensagens.Add(new MensagemErro("Habitats", "O recinto possui habitats vinculados."));
+                mensagens.Add(new MensagemErro("Habitats", "O recinto possui habitats vinculados e não pode ser excluído."));
                 return false;
+            }
+
+            if (recinto.Categoria != null)
+            {
+                recinto.Categoria.Recinto = null;
             }
 
             try
             {
                 using var transacao = _repository.IniciarTransacao();
+
                 _repository.Excluir(recinto);
+
                 _repository.Commit();
                 return true;
             }
@@ -184,6 +209,8 @@ namespace ZooConsole.Services
                 return false;
             }
         }
+
+
 
         private bool ExisteRecintoParaCategoria(long categoriaId, long idExcluir = 0)
         {
