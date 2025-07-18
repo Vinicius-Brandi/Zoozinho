@@ -10,7 +10,7 @@ import {
 import ModalAlert from '../Gerais/modalAlerta';
 import { useModalAlert } from '../../services/config';
 
-import './styles/cadastroAnimal.css';
+import "../Gerais/styles/cadastros.css"
 
 export default function CadastroAnimal({ animalId = null, onClose, onSuccess }) {
   const [especies, setEspecies] = useState([]);

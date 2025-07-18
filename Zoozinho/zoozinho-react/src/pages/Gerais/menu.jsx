@@ -18,7 +18,13 @@ export function Menu() {
             <span>Localização</span>
             <ul className="dropdown-content">
               <li><Link to="/habitats">Habitats</Link></li>
-              <li><Link to="/galpao">Galpão</Link></li>
+              <li>
+                Galpão
+                <ul className="dropdown-content-2">
+                  <li><Link to= "/galpao/editar">Editar</Link></li>
+                  <li><Link to="/galpao/relatorio">Relatorio</Link></li>
+                </ul>
+                </li>
               <li><Link to="/recintos">Recintos</Link></li>
             </ul>
           </li>

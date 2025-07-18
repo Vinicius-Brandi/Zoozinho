@@ -110,6 +110,49 @@ namespace ZooConsole.Services
                 .ToList();
         }
 
+        public RecintoRelatorioDTO Relatorio(long recintoId)
+        {
+            var recinto = _repository.Consultar<Recinto>()
+                .FirstOrDefault(r => r.Id == recintoId);
+
+            var habitats = recinto?.Habitats;
+
+            if (recinto == null || habitats == null || !habitats.Any())
+            {
+                return new RecintoRelatorioDTO
+                {
+                    NomeRecinto = recinto?.Nome ?? "Desconhecido",
+                    Categoria = recinto?.Categoria?.Nome ?? "Desconhecida",
+                    TotalAnimais = 0,
+                    Especies = new List<EspecieQuantidadeDTO>()
+                };
+            }
+
+            var animais = habitats
+                .Where(h => h.Animais != null)
+                .SelectMany(h => h.Animais)
+                .ToList();
+
+            var especies = animais
+                .GroupBy(a => new { a.Especie.Id, a.Especie.Nome })
+                .Select(g => new EspecieQuantidadeDTO
+                {
+                    EspecieId = g.Key.Id,
+                    EspecieNome = g.Key.Nome,
+                    Quantidade = g.Count()
+                }).ToList();
+
+            return new RecintoRelatorioDTO
+            {
+                NomeRecinto = recinto.Nome,
+                Categoria = recinto.Categoria.Nome,
+                TotalAnimais = animais.Count,
+                Especies = especies
+            };
+        }
+
+
+
         public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
         {
             mensagens = new List<MensagemErro>();

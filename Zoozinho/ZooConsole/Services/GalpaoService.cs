@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ZooConsole.DTOs;
+using ZooConsole.DTOs.ZooConsole.DTOs;
 using ZooConsole.Models;
 using ZooConsole.Repository;
 
@@ -8,40 +9,11 @@ namespace ZooConsole.Services
     public class GalpaoService
     {
         private readonly IRepositorio _repository;
-        private const int LIMITE_MAXIMO = 15;
-        private const int LIMITE_AUMENTO = 5;
+        private const int LIMITE_MAXIMO = 30;
 
         public GalpaoService(IRepositorio repository)
         {
             _repository = repository;
-        }
-
-        public bool Cadastrar(GalpaoDTO dto, out List<MensagemErro> mensagens)
-        {
-            mensagens = new List<MensagemErro>();
-
-            if (_repository.Consultar<Galpao>().Any())
-            {
-                mensagens.Add(new MensagemErro("Galpao", "Já existe um galpão cadastrado. Não é possível criar outro."));
-                return false;
-            }
-
-            if (dto.CapacidadeMaxima > LIMITE_MAXIMO)
-            {
-                mensagens.Add(new MensagemErro("CapacidadeMaxima", $"A capacidade máxima não pode ultrapassar {LIMITE_MAXIMO} animais."));
-                return false;
-            }
-
-            var galpao = new Galpao
-            {
-                Nome = "Galpão Principal",
-                CapacidadeMaxima = dto.CapacidadeMaxima
-            };
-
-            if (!Validar(galpao, mensagens))
-                return false;
-
-            return Salvar(galpao, mensagens, isNew: true);
         }
 
         public bool Atualizar(GalpaoDTO dto, out List<MensagemErro> mensagens)
@@ -55,22 +27,16 @@ namespace ZooConsole.Services
                 return false;
             }
 
-            if (dto.CapacidadeMaxima <= galpao.CapacidadeMaxima)
-            {
-                mensagens.Add(new MensagemErro("CapacidadeMaxima", "Só é permitido aumentar a capacidade."));
-                return false;
-            }
-
-            int aumento = dto.CapacidadeMaxima - galpao.CapacidadeMaxima;
-            if (aumento > LIMITE_AUMENTO)
-            {
-                mensagens.Add(new MensagemErro("CapacidadeMaxima", $"O aumento máximo permitido é de {LIMITE_AUMENTO} unidades."));
-                return false;
-            }
-
             if (dto.CapacidadeMaxima > LIMITE_MAXIMO)
             {
                 mensagens.Add(new MensagemErro("CapacidadeMaxima", $"A capacidade total não pode ultrapassar {LIMITE_MAXIMO} animais."));
+                return false;
+            }
+
+            int QuantidadeAtual = galpao.Animais?.Count ?? 0;
+            if (QuantidadeAtual > dto.CapacidadeMaxima)
+            {
+                mensagens.Add(new MensagemErro("CapacidadeMaxima", $"Existem {QuantidadeAtual} animais no galpão, não é possivel diminuir para {dto.CapacidadeMaxima}."));
                 return false;
             }
 
@@ -127,5 +93,34 @@ namespace ZooConsole.Services
                 return false;
             }
         }
+        public GalpaoRelatorioDTO Relatorio()
+        {
+            var galpao = _repository.Consultar<Galpao>().FirstOrDefault();
+
+            if (galpao == null || galpao.Animais == null || !galpao.Animais.Any())
+            {
+                return new GalpaoRelatorioDTO
+                {
+                    TotalAnimais = 0,
+                    Especies = new List<EspecieQuantidadeDTO>()
+                };
+            }
+
+            var especies = galpao.Animais
+                .GroupBy(a => new { a.Especie.Id, a.Especie.Nome })
+                .Select(g => new EspecieQuantidadeDTO
+                {
+                    EspecieId = g.Key.Id,
+                    EspecieNome = g.Key.Nome,
+                    Quantidade = g.Count()
+                }).ToList();
+
+            return new GalpaoRelatorioDTO
+            {
+                TotalAnimais = galpao.Animais.Count,
+                Especies = especies
+            };
+        }
+
     }
 }

@@ -55,3 +55,10 @@ export async function deletarRecinto(id, forcar = false) {
     }
     return await response.json();
 }
+
+export async function mostrarRelatorioRecinto(id) {
+    const response = await fetch(`${url_recinto}/${id}/relatorio`);
+    if (!response.ok) throw new Error("Erro ao obter relatório do recinto");
+    return await response.json();
+}
+

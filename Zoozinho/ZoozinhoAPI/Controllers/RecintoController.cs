@@ -40,6 +40,13 @@ namespace ZooAPI.Controllers
                 : Ok(recinto);
         }
 
+        [HttpGet("{id}/relatorio")]
+        public ActionResult<RecintoRelatorioDTO> Relatorio(long id)
+        {
+            var resultado = _servico.Relatorio(id);
+            return Ok(resultado);
+        }
+
         [HttpPut("{id:long}")]
         public IActionResult Atualizar(long id, [FromBody] RecintoDTO dto)
         {

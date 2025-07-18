@@ -7,6 +7,7 @@ import {
 import { useParams } from 'react-router-dom';
 import ModalAlert from '../Gerais/modalAlerta';
 import { useModalAlert } from '../../services/config';
+import "../Gerais/styles/cadastros.css";
 
 export default function CadastroCategoria({ onSuccess, onClose }) {
   const { id: categoriaId } = useParams();

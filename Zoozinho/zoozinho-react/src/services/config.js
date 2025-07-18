@@ -39,3 +39,12 @@ export function useModalAlert() {
     closeModal,
   };
 }
+
+export function RelatorioEmDados(relatorio) {
+  if (!relatorio || !relatorio.especies) return [];
+
+  return relatorio.especies.map(e => ({
+    nome: e.especieNome,
+    quantidade: e.quantidade,
+  }));
+}

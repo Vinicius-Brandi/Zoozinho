@@ -15,15 +15,6 @@ namespace ZoozinhoAPI.Controllers
             _servico = servico;
         }
 
-        [HttpPost]
-        public IActionResult Cadastrar([FromBody] GalpaoDTO dto)
-        {
-            if (_servico.Cadastrar(dto, out var erros))
-                return Ok(new { mensagem = "Galpão cadastrado com sucesso.", dto });
-
-            return UnprocessableEntity(erros);
-        }
-
         [HttpGet]
         public IActionResult Mostrar()
         {
@@ -49,5 +40,13 @@ namespace ZoozinhoAPI.Controllers
             var animais = _servico.ListarAnimais();
             return Ok(animais);
         }
+
+        [HttpGet("relatorio")]
+        public IActionResult Relatorio()
+        {
+            var relatorio = _servico.Relatorio();
+            return Ok(relatorio);
+        }
+
     }
 }
