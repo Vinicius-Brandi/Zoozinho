@@ -137,6 +137,8 @@ A entidade **Categoria** representa um agrupamento geral(base de tudo) que pode 
 - Pode conter uma lista de espécies associadas.
 - Pode estar vinculada a um único recinto.
 - Não pode ser excluída se vinculada a espécies ou recinto.
+- Nome pesquisável e listável com paginação.
+
 
 ### Funcionalidades
 
@@ -150,7 +152,7 @@ A entidade **Categoria** representa um agrupamento geral(base de tudo) que pode 
 
 ## Recintos
 
-O **Recinto** representa uma área física onde habitats são alocados, vinculado a uma categoria.
+O **Recinto** representa uma área física onde habitats são alocados, e vinculado.
 
 ### Regras e Características
 
@@ -160,6 +162,8 @@ O **Recinto** representa uma área física onde habitats são alocados, vinculad
 - Categoria não pode ser alterada se houver habitats vinculados.
 - Não pode ser excluído se possuir habitats.
 - Ao excluir, desvincula a categoria automaticamente.
+- Nome pesquisável e listável com paginação.
+
 
 ### Funcionalidades
 
@@ -181,10 +185,12 @@ A entidade **Espécie** representa um grupo de animais com características seme
 - Nome único obrigatório.
 - Vinculada a uma única categoria.
 - Pode ter vários animais associados.
-- Pode possuir um habitat.
+- Pode possuir um único habitat.
 - Categoria não pode ser alterada se já possuir habitat.
-- Exclusão proibida se houver animais ou habitat, exceto exclusão forçada.
-- Relatórios por categoria disponíveis.
+- Exclusão proibida se houver animais ou habitat, exceto exclusão forçada(não recomendo, funciona, mas só deixei no backend, para não limpar tudo).
+- Relatórios por categoria disponíveis(sem utilização no front).
+- Nome pesquisável e listável com paginação.
+
 
 ### Funcionalidades
 
@@ -225,17 +231,16 @@ Representa o ambiente físico para uma espécie dentro de um recinto.
 Espaço único para alocar animais excedentes ou sem habitat.
 
 ### Regras e Características
-
+- Galpão adicionado somente via Insert.
 - Apenas um galpão no sistema.
-- Capacidade máxima: 15 animais.
+- Capacidade máxima: 30 animais.
 - Nome definido automaticamente pela categoria.
-- Capacidade só pode aumentar.
+- Capacidade não pode ser menor que o número de animais já possuida no galpão.
 - Pode conter várias espécies.
 - Não pode ser excluído.
 
 ### Funcionalidades
 
-- Cadastrar (se não existir) (`Cadastrar`)
 - Atualizar capacidade (`Atualizar`)
 - Buscar galpão atual com animais (`Mostrar`)
 - Listar animais presentes (`ListarAnimais`)
@@ -256,6 +261,8 @@ Representa cada animal sob os cuidados do zoológico.
 - Se não houver habitats, deve ir para galpão.
 - Não pode alocar em local com capacidade cheia.
 - Registra movimentações de localização.
+- Nome pesquisável e listável com paginação.
+
 
 ### Funcionalidades
 
@@ -275,7 +282,7 @@ Registra deslocamentos dos animais entre habitats e galpão.
 ### Regras e Características
 
 - Associada a um animal.
-- Origem pode ser habitat, galpão ou nula (primeira movimentação).
+- Origem pode ser habitat, galpão ou nula (primeira movimentação, ou em caso de exclusão de um habitat).
 - Destino obrigatório (habitat ou galpão).
 - Armazena data e hora.
 - Ordenação da mais recente para mais antiga.
