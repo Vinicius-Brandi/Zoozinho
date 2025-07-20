@@ -90,7 +90,7 @@ explorer .
 - Porta: 5432
 - Senha: 1234 _(Tudo é padrão menos essa senha, garanta que esteja assim)_
 
-13) Conecte-se ao servidor registrado crie um banco de dados com nome = postgres (meio de algum software como DBEAVER(de preferência)
+13) Conecte-se ao servidor registrado crie um banco de dados com nome = postgres (por meio de algum software como DBEAVER(de preferência)
     
 14) Crie um script e coloque nele o script que que está no banco de dados, pegue todo ele com o mouse e dê ctrl+enter
     
