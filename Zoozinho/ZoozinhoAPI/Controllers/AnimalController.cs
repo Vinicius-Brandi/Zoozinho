@@ -25,10 +25,10 @@ namespace ZoozinhoAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar([FromQuery] int skip = 0, [FromQuery] int pageSize = 6)
+        public IActionResult Listar(int skip = 0, int pageSize = 10, long? especieId = null, long? habitatId = null, string pesquisa = null)
         {
-            var lista = _servico.Listar(skip, pageSize);
-            return Ok(lista);
+            var habitats = _servico.Listar(skip, pageSize, especieId, habitatId, pesquisa);
+            return Ok(habitats);
         }
 
 

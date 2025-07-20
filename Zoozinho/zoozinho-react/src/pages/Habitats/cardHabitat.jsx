@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import "../Gerais/styles/cardBase.css";
 
-export default function AnimalCard({ item }) {
+export default function HabitatCard({ item }) {
   const navigate = useNavigate();
-  if (!item) return null;
+
   const handleClick = () => {
-    navigate(`/animais/perfil/${item.id}`);
+    navigate(`/habitats/perfil/${item.id}`);
   };
 
   return (
     <div className="card-base" onClick={handleClick}>
       <h3>{item.nome}</h3>
       <p><strong>Espécie:</strong> {item.especieNome}</p>
-      <p><strong>Idade:</strong> {item.idade} anos</p>
-      <p><strong>Localização:</strong> {item.localizacao || "Desconhecido"}</p>
+      <p><strong>Recinto:</strong> {item.recintoNome}</p>
+      <p><strong>Capacidade Máxima:</strong> {item.capacidadeMaxima}</p>
     </div>
   );
 }

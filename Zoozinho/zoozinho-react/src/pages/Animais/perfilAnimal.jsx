@@ -5,19 +5,16 @@ import CadastroAnimal from "./cadastroAnimal";
 import ListaMovimentacoes from "./movimentacao";
 import ModalAlert from "../Gerais/modalAlerta";
 import { useModalAlert } from "../../services/config";
-import "./styles/perfilAnimal.css";
+import "../Gerais/styles/perfil.css"
 
 export default function PerfilAnimal() {
   const { id } = useParams();
-
   const [animal, setAnimal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
-
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [reloadMovimentacoes, setReloadMovimentacoes] = useState(0);
-
   const {
     modalOpen: alertaAberto,
     modalTitle,
@@ -65,36 +62,38 @@ export default function PerfilAnimal() {
   if (!animal) return <p>Animal não encontrado.</p>;
 
   return (
-    <div className="perfil-animal">
+    <div className="pagina-detalhes">
       <h1>Perfil do Animal: {animal.nome}</h1>
 
-      <p>
-        <strong>Espécie:</strong> {animal.especieNome}
-      </p>
-      <p>
-        <strong>Idade:</strong> {animal.idade} anos
-      </p>
-      <p>
-        <strong>Peso:</strong> {animal.peso} kg
-      </p>
-      <p>
-        <strong>Sexo:</strong> {animal.sexo}
-      </p>
-      <p>
-        <strong>Alocação:</strong>{" "}
-        {animal.habitatNome || animal.galpaoNome || "Não alocado"}
-      </p>
+      <div className="secao-informacoes">
+        <p>
+          <strong>Espécie:</strong> {animal.especieNome}
+        </p>
+        <p>
+          <strong>Idade:</strong> {animal.idade} anos
+        </p>
+        <p>
+          <strong>Peso:</strong> {animal.peso} kg
+        </p>
+        <p>
+          <strong>Sexo:</strong> {animal.sexo}
+        </p>
+        <p>
+          <strong>Alocação:</strong>{" "}
+          {animal.habitatNome || animal.galpaoNome || "Não alocado"}
+        </p>
+      </div>
 
-      <div className="button-area">
+      <div className="button-group">
         <button onClick={() => setModalOpen(true)}>Editar Animal</button>
-        <button onClick={() => setConfirmarExclusao(true)} className="botao-excluir">
+        <button onClick={() => setConfirmarExclusao(true)} className="button-delete">
           Excluir Animal
         </button>
       </div>
 
       {modalOpen && (
-        <div className="modal-background">
-          <div className="modal-content">
+        <div className="modal-overlay">
+          <div className="modal-dialog">
             <CadastroAnimal
               animalId={id}
               onClose={() => setModalOpen(false)}
@@ -109,17 +108,17 @@ export default function PerfilAnimal() {
       )}
 
       {confirmarExclusao && (
-        <div className="modal-background">
-          <div className="modal-content">
+        <div className="modal-overlay">
+          <div className="modal-dialog">
             <h3>Confirmar Exclusão</h3>
             <p>Tem certeza que deseja excluir este animal?</p>
-            <div className="button-area">
-              <button onClick={excluirAnimal} className="button-submit">
+            <div className="modal-button-group">
+              <button onClick={excluirAnimal} className="button-confirm">
                 Sim, excluir
               </button>
               <button
                 onClick={() => setConfirmarExclusao(false)}
-                className="button-reset"
+                className="button-cancel"
               >
                 Cancelar
               </button>

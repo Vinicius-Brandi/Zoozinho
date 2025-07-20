@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   listarEspecies,
   listarHabitats,
@@ -9,55 +9,76 @@ import {
 } from '../../services';
 import ModalAlert from '../Gerais/modalAlerta';
 import { useModalAlert } from '../../services/config';
-
-import "../Gerais/styles/cadastros.css"
+import "../Gerais/styles/cadastros.css";
 
 export default function CadastroAnimal({ animalId = null, onClose, onSuccess }) {
   const [especies, setEspecies] = useState([]);
   const [habitats, setHabitats] = useState([]);
   const [galpao, setGalpao] = useState(null);
-
   const [especieTrancada, setEspecieTrancada] = useState(false);
   const [especieId, setEspecieId] = useState('');
   const [localTipo, setLocalTipo] = useState('');
   const [localId, setLocalId] = useState('');
   const [sexo, setSexo] = useState('');
-  const [animalData, setAnimalData] = useState(null);
-
+  const [animalData, setAnimalData] = useState(null); 
+  const [loadingInitialData, setLoadingInitialData] = useState(true);
+  const [errorInitialData, setErrorInitialData] = useState(null);
   const { modalOpen, modalTitle, modalMessage, showModal, closeModal } = useModalAlert();
-
   useEffect(() => {
-    listarEspecies().then(setEspecies);
-    listarHabitats().then(setHabitats);
-    mostrarGalpao().then(setGalpao);
-  }, []);
+    const loadAllInitialData = async () => {
+      setLoadingInitialData(true);
+      setErrorInitialData(null);
+      try {
+        const especiesResponse = await listarEspecies();
+        setEspecies(especiesResponse.itens || []);
 
+        const habitatsResponse = await listarHabitats();
+        setHabitats(habitatsResponse.itens || []);
+
+        const galpaoData = await mostrarGalpao();
+        setGalpao(galpaoData);
+      } catch (error) {
+        console.error("Erro ao carregar dados iniciais:", error);
+        setErrorInitialData("Erro ao carregar opções do formulário.");
+        showModal("Erro", "Erro ao carregar opções do formulário.");
+      } finally {
+        setLoadingInitialData(false);
+      }
+    };
+    loadAllInitialData();
+  }, [showModal]);
   useEffect(() => {
     if (animalId) {
-      buscarAnimalPorId(animalId).then(animal => {
-        setAnimalData(animal);
-        setEspecieId(animal.especieId.toString());
-        setSexo(animal.sexo.toString());
+      buscarAnimalPorId(animalId)
+        .then(animal => {
+          setAnimalData(animal);
+          setEspecieId(animal.especieId?.toString() || '');
+          setSexo(animal.sexo?.toString() || '');
 
-        if (animal.habitatId) {
-          setLocalTipo('Habitat');
-          setLocalId(animal.habitatId.toString());
-        } else if (animal.galpaoId) {
-          setLocalTipo('Galpao');
-          setLocalId(animal.galpaoId.toString());
-        } else {
-          setLocalTipo('');
-          setLocalId('');
-        }
-      });
+          if (animal.habitatId) {
+            setLocalTipo('Habitat');
+            setLocalId(animal.habitatId.toString());
+          } else if (animal.galpaoId) {
+            setLocalTipo('Galpao');
+            setLocalId(animal.galpaoId.toString());
+          } else {
+            setLocalTipo('');
+            setLocalId('');
+          }
+        })
+        .catch(error => {
+          console.error("Erro ao carregar dados do animal para edição:", error);
+          showModal("Erro", "Não foi possível carregar os dados do animal para edição.");
+        });
     } else {
       setAnimalData(null);
       setEspecieId('');
       setLocalTipo('');
       setLocalId('');
       setSexo('');
+      setEspecieTrancada(false);
     }
-  }, [animalId]);
+  }, [animalId, showModal]);
 
   const habitatsFiltrados = useMemo(() => {
     if (!especieId) return habitats;
@@ -66,16 +87,18 @@ export default function CadastroAnimal({ animalId = null, onClose, onSuccess }) 
 
   useEffect(() => {
     if (localTipo === 'Habitat') {
-      if (!habitatsFiltrados.some(h => h.id === Number(localId))) {
+      if (localId && !habitatsFiltrados.some(h => h.id === Number(localId))) {
         setLocalId('');
       }
       const habitat = habitats.find(h => h.id === Number(localId));
-      if (habitat && habitat.especieId.toString() !== especieId) {
+      if (habitat && habitat.especieId?.toString() !== especieId) {
         setEspecieId(habitat.especieId.toString());
         setEspecieTrancada(true);
         return;
       }
-      if (especieTrancada) setEspecieTrancada(false);
+      if (especieTrancada && (!habitat || habitat.especieId?.toString() === especieId)) {
+        setEspecieTrancada(false);
+      }
     } else {
       if (especieTrancada) setEspecieTrancada(false);
     }
@@ -85,7 +108,7 @@ export default function CadastroAnimal({ animalId = null, onClose, onSuccess }) 
     const tipo = e.target.value;
     setLocalTipo(tipo);
     if (tipo === 'Galpao' && galpao) {
-      setLocalId(galpao.id.toString());
+      setLocalId(galpao.id?.toString() || '');
     } else {
       setLocalId('');
     }
@@ -141,15 +164,25 @@ export default function CadastroAnimal({ animalId = null, onClose, onSuccess }) 
           .map(e => `${e.propriedade || e.campo || "Erro"}: ${e.mensagem || e.message || ""}`)
           .join("\n");
         showModal('Erro ao salvar', mensagens);
+      } else if (errors && errors.message) {
+        showModal('Erro ao salvar', errors.message);
       } else {
         showModal('Erro ao salvar', 'Erro inesperado ao salvar animal.');
       }
     }
   };
+  if (loadingInitialData) {
+    return <p className="loading-message">Carregando formulário...</p>;
+  }
+  if (errorInitialData) {
+    return <p className="error-message">{errorInitialData}</p>;
+  }
 
   return (
     <>
       <form onSubmit={handleSubmit} className="form-container">
+        <h2>{animalId ? 'Editar Animal' : 'Cadastrar Animal'}</h2>
+
         <div className="form-group">
           <label>Nome:</label>
           <input
@@ -273,9 +306,11 @@ export default function CadastroAnimal({ animalId = null, onClose, onSuccess }) 
           <button type="submit" className="button-submit">
             {animalId ? 'Atualizar' : 'Cadastrar'}
           </button>
-          <button type="button" onClick={onClose} className="button-reset">
-            Cancelar
-          </button>
+          {animalId && (
+            <button type="button" onClick={onClose} className="button-reset">
+              Cancelar
+            </button>
+          )}
         </div>
       </form>
 

@@ -22,6 +22,7 @@
         public string Alimentacao { get; set; }
         public string Comportamento { get; set; }
         public long CategoriaId { get; set; }
+        public string CategoriaNome { get; set; }
         public List<string> AnimaisNomes { get; set; }
         public string HabitatNome { get; set; }
     }

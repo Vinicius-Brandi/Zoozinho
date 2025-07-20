@@ -1,32 +1,37 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useModalAlert } from "../../services/config";
+import ModalAlert from "../Gerais/modalAlerta";
 import {
+  buscarRecintoPorId,
   cadastrarRecinto,
   atualizarRecinto,
-  buscarRecintoPorId,
   listarCategorias,
-} from '../../services';
-import { useParams } from 'react-router-dom';
-import { useModalAlert } from '../../services/config';
-import ModalAlert from '../Gerais/modalAlerta';
+} from "../../services";
 import "../Gerais/styles/cadastros.css";
 
-export default function CadastroRecinto({ onSuccess, onClose }) {
-  const { id } = useParams();
+export default function CadastroRecinto({ id, onClose, onSuccess }) {
   const formRef = useRef();
+  const navigate = useNavigate();
   const [categorias, setCategorias] = useState([]);
-  const { modalOpen, modalTitle, modalMessage, showModal, closeModal } = useModalAlert();
+  const { modalOpen, modalTitle, modalMessage, showModal, closeModal } =
+    useModalAlert();
 
   useEffect(() => {
-    listarCategorias().then(setCategorias);
+    listarCategorias().then((dados) => setCategorias(dados.itens || dados));
   }, []);
-
   useEffect(() => {
     if (id && categorias.length > 0) {
       buscarRecintoPorId(id).then((recinto) => {
         if (formRef.current) {
-          formRef.current.nome.value = recinto.nome || '';
-          formRef.current.capacidadeMaxHabitats.value = recinto.capacidadeMaxHabitats ?? '';
-          formRef.current.categoriaId.value = recinto.categoriaId ?? '';
+          formRef.current.nome.value = recinto.nome || "";
+          formRef.current.capacidadeMaxHabitats.value =
+            recinto.capacidadeMaxHabitats ?? "";
+          if (recinto.categoriaId && categorias.some(cat => cat.id === recinto.categoriaId)) {
+            formRef.current.categoriaId.value = String(recinto.categoriaId);
+          } else {
+            formRef.current.categoriaId.value = "";
+          }
         }
       });
     } else if (formRef.current) {
@@ -34,18 +39,17 @@ export default function CadastroRecinto({ onSuccess, onClose }) {
     }
   }, [id, categorias]);
 
-  const handleSubmit = async (e) => {
+  const salvar = async (e) => {
     e.preventDefault();
     const form = new FormData(formRef.current);
-
     const dto = {
-      nome: form.get('nome')?.trim(),
-      categoriaId: parseInt(form.get('categoriaId')),
-      capacidadeMaxHabitats: parseInt(form.get('capacidadeMaxHabitats')),
+      nome: form.get("nome")?.trim(),
+      capacidadeMaxHabitats: parseInt(form.get("capacidadeMaxHabitats")),
+      categoriaId: parseInt(form.get("categoriaId")),
     };
 
-    if (!dto.nome || isNaN(dto.categoriaId) || isNaN(dto.capacidadeMaxHabitats)) {
-      showModal("Erro de validação", "Preencha todos os campos obrigatórios.");
+    if (!dto.nome || isNaN(dto.capacidadeMaxHabitats) || isNaN(dto.categoriaId)) {
+      showModal("Erro de validação", "Preencha todos os campos corretamente.");
       return;
     }
 
@@ -60,10 +64,12 @@ export default function CadastroRecinto({ onSuccess, onClose }) {
       }
       if (onSuccess) onSuccess();
       if (onClose) onClose();
+      else if (!id) navigate("/recintos");
+      else navigate(`/recintos/perfil/${id}`);
     } catch (errors) {
       if (Array.isArray(errors)) {
         const mensagem = errors
-          .map(e => `• ${e.mensagem || e.message || "Erro desconhecido"}`)
+          .map((e) => `• ${e.mensagem || e.message || "Erro desconhecido"}`)
           .join("\n");
         showModal("Erro ao salvar", mensagem);
       } else {
@@ -72,18 +78,29 @@ export default function CadastroRecinto({ onSuccess, onClose }) {
     }
   };
 
+  const handleCancel = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      if (id) {
+        navigate(`/recintos/perfil/${id}`);
+      } else {
+        navigate("/recintos");
+      }
+    }
+  };
+
+
   return (
     <>
-      <form ref={formRef} onSubmit={handleSubmit} className="form-container">
+      <form ref={formRef} onSubmit={salvar} className="form-container">
         <h2>{id ? "Editar Recinto" : "Cadastrar Recinto"}</h2>
-
         <div className="form-group">
-          <label>Nome:</label>
+          <label htmlFor="nome">Nome:</label>
           <input name="nome" type="text" required className="form-input" />
         </div>
-
         <div className="form-group">
-          <label>Capacidade Máxima de Habitats:</label>
+          <label htmlFor="capacidadeMaxHabitats">Capacidade Máxima de Habitats:</label>
           <input
             name="capacidadeMaxHabitats"
             type="number"
@@ -94,11 +111,11 @@ export default function CadastroRecinto({ onSuccess, onClose }) {
         </div>
 
         <div className="form-group">
-          <label>Categoria:</label>
+          <label htmlFor="categoriaId">Categoria:</label>
           <select name="categoriaId" required className="form-select">
             <option value="">Selecione a categoria</option>
-            {categorias.map(cat => (
-              <option key={cat.id} value={cat.id}>
+            {categorias.map((cat) => (
+              <option key={cat.id} value={String(cat.id)}>
                 {cat.nome}
               </option>
             ))}
@@ -109,8 +126,12 @@ export default function CadastroRecinto({ onSuccess, onClose }) {
           <button type="submit" className="button-submit">
             {id ? "Atualizar" : "Cadastrar"}
           </button>
-          {onClose && (
-            <button type="button" onClick={onClose} className="button-reset">
+          {(onClose || id) && (
+            <button
+              type="button"
+              className="button-reset"
+              onClick={handleCancel}
+            >
               Cancelar
             </button>
           )}

@@ -25,9 +25,9 @@ namespace ZooAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult Listar(int skip = 0, int pageSize = 10, string pesquisa = null, long? categoriaId = null)
         {
-            var especies = _servico.Listar();
+            var especies = _servico.Listar(skip, pageSize, pesquisa, categoriaId);
             return Ok(especies);
         }
 

@@ -9,7 +9,6 @@ export default function ListaMovimentacoes({ animalId, reloadKey }) {
 
   useEffect(() => {
     if (!animalId) return;
-
     async function carregar() {
       try {
         setLoading(true);

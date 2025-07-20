@@ -25,9 +25,9 @@ namespace ZooAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar([FromQuery] int skip = 0, [FromQuery] int pageSize = 6)
+        public IActionResult Listar(int skip = 0, int pageSize = 10, string pesquisa = null) 
         {
-            var lista = _servico.Listar(skip, pageSize);
+            var lista = _servico.Listar(skip, pageSize, pesquisa);
             return Ok(lista);
         }
 
@@ -57,9 +57,9 @@ namespace ZooAPI.Controllers
         }
 
         [HttpDelete("{id:long}")]
-        public IActionResult Deletar(long id, [FromQuery] bool forcar = false)
+        public IActionResult Deletar(long id)
         {
-            if (_servico.Deletar(id, out var erros, forcar))
+            if (_servico.Deletar(id, out var erros))
                 return Ok(new { mensagem = "Recinto excluído com sucesso." });
 
             return UnprocessableEntity(erros);

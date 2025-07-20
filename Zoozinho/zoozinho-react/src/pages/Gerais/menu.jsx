@@ -17,7 +17,12 @@ export function Menu() {
           <li className="dropdown">
             <span>Localização</span>
             <ul className="dropdown-content">
-              <li><Link to="/habitats">Habitats</Link></li>
+              <li><Link to="/habitats">Habitats</Link>
+              <ul className='dropdown-content-2'>
+                <li><Link to="/habitats/cadastro">Cadastrar</Link></li>
+                <li><Link to="/habitats">Visualizar</Link></li>
+              </ul>
+              </li>
               <li>
                 Galpão
                 <ul className="dropdown-content-2">
@@ -25,7 +30,7 @@ export function Menu() {
                   <li><Link to="/galpao/relatorio">Relatorio</Link></li>
                 </ul>
                 </li>
-              <li>Recintos
+              <li><Link to="/recintos">Recintos</Link>
                 <ul className="dropdown-content-2">
                   <li><Link to="/recintos/cadastro">Cadastrar</Link></li>
                   <li><Link to="/recintos">Visualizar</Link></li>

@@ -193,22 +193,39 @@ namespace ZooConsole.Services
         }
 
 
-        public TotalItens<AnimalListagemDTO> Listar(int skip = 0, int pageSize = 10)
+        public TotalItens<AnimalListagemDTO> Listar(int skip = 0, int pageSize = 10, long? especieId = null, long? habitatId = null, string pesquisa=null)
         {
-            IQueryable<Animal> query = _repository.Consultar<Animal>().OrderBy(a => a.Id);
-            int total = query.Count();
+            IQueryable<Animal> consulta = _repository.Consultar<Animal>();
+
+            if (especieId.HasValue)
+            {
+                consulta = consulta.Where(a => a.Especie.Id == especieId.Value);
+            }
+
+            if (habitatId.HasValue)
+            {
+                consulta = consulta.Where(a => a.Habitat != null && a.Habitat.Id == habitatId.Value);
+            }
+            if (!string.IsNullOrEmpty(pesquisa))
+            {
+                consulta = consulta.Where(h => h.Nome.ToLower().Contains(pesquisa.ToLower()));
+            }
+
+            consulta = consulta.OrderBy(c => c.Nome);
+
+            int total = consulta.Count();
 
             if (skip > 0)
             {
-                query = query.Skip(skip);
+                consulta = consulta.Skip(skip);
             }
 
             if (pageSize > 0)
             {
-                query = query.Take(pageSize);
+                consulta = consulta.Take(pageSize);
             }
 
-            var itens = query.ToList()
+            var itens = consulta.ToList()
                 .Select(animal => new AnimalListagemDTO
                 {
                     Id = animal.Id,
@@ -231,8 +248,6 @@ namespace ZooConsole.Services
                 Itens = itens
             };
         }
-
-
 
         public List<MovimentacaoDTO> ListarMovimentacoes(long animalId, int skip = 0, int pageSize = 10)
         {
@@ -285,8 +300,6 @@ namespace ZooConsole.Services
                 return false;
             }
         }
-
-
 
         private bool ValidarAlocacaoAnimal(long especieId, Habitat habitat, Galpao galpao, List<MensagemErro> mensagens, long idAtualizar = 0)
         {

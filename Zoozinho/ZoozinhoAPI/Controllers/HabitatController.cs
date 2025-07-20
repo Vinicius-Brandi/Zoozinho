@@ -26,9 +26,9 @@ namespace ZooAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar()
+        public IActionResult Listar(int skip = 0, int pageSize = 10, long? recintoId = null, string pesquisa = null) 
         {
-            var habitats = _servico.Listar();
+            var habitats = _servico.Listar(skip, pageSize, recintoId, pesquisa); 
             return Ok(habitats);
         }
 
@@ -51,9 +51,9 @@ namespace ZooAPI.Controllers
         }
 
         [HttpDelete("{id:long}")]
-        public IActionResult Deletar(long id, [FromQuery] bool forcar = false)
+        public IActionResult Deletar(long id)
         {
-            if (_servico.Deletar(id, out var erros, forcar))
+            if (_servico.Deletar(id, out var erros))
                 return Ok(new { mensagem = "Habitat excluído com sucesso." });
 
             return UnprocessableEntity(erros);

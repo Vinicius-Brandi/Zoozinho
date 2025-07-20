@@ -23,14 +23,12 @@ namespace ZooConsole.Services
             Habitat destinoHabitat,
             Galpao destinoGalpao)
         {
-            // Define origem somente se existir origemHabitat ou origemGalpao
             Localizacao? origem = null;
             if (origemHabitat != null)
                 origem = Localizacao.Habitat;
             else if (origemGalpao != null)
                 origem = Localizacao.Galpao;
 
-            // Define destino, obrigatoriamente Habitat ou Galpao
             Localizacao destino = destinoHabitat != null ? Localizacao.Habitat : Localizacao.Galpao;
 
             var movimentacao = new Movimentacao
@@ -57,17 +55,17 @@ namespace ZooConsole.Services
 
         public List<Movimentacao> ListarPorAnimal(long animalId, int skip = 0, int pageSize = 10)
         {
-            IQueryable<Movimentacao> query = _repository.Consultar<Movimentacao>()
+            IQueryable<Movimentacao> consulta = _repository.Consultar<Movimentacao>()
                 .Where(m => m.AnimalId == animalId)
                 .OrderByDescending(m => m.DataHora);
 
             if (skip > 0)
-                query = query.Skip(skip);
+                consulta = consulta.Skip(skip);
 
             if (pageSize > 0)
-                query = query.Take(pageSize);
+                consulta = consulta.Take(pageSize);
 
-            return query.ToList();
+            return consulta.ToList();
         }
     }
 }

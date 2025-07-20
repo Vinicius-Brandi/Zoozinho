@@ -1,109 +1,100 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import "./styles/listagem.css";
 
 export default function ListaGenerica({
   titulo,
-  buscarDados,        // função async(skip, take) que retorna { total, itens }
-  componenteItem: ComponenteItem,  // componente React para renderizar cada item da lista
-  nomeEntidade        // string para construir rota de clique, ex: "animais"
+  buscarDados,
+  componenteItem: ComponenteItem,
+  nomeEntidade,
+  filtrosExtras = {}
 }) {
   const [itens, setItens] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState(null);
-  const [transicao, setTransicao] = useState("in");
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
-
-  const pagina = parseInt(searchParams.get("pagina") || "0");
+  const [termoPesquisa, setTermoPesquisa] = useState("");
+  const [pagina, setPagina] = useState(0);
   const pageSize = 6;
   const totalPaginas = Math.ceil(total / pageSize);
 
-  const carregarDados = async (paginaAtual) => {
+  const carregarDados = useCallback(async () => {
     setLoading(true);
     setErro(null);
     try {
-      const skip = paginaAtual * pageSize;
-      const resultado = await buscarDados(skip, pageSize);
+      const skip = pagina * pageSize;
+      const resultado = await buscarDados(skip, pageSize, termoPesquisa, filtrosExtras);
       setItens(resultado.itens || []);
       setTotal(resultado.total || 0);
-    } catch {
+    } catch (error) {
       setErro(`Erro ao carregar ${titulo.toLowerCase()}.`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, [pagina, filtrosExtras, buscarDados, termoPesquisa, pageSize]);
 
   useEffect(() => {
-    setTransicao("out");
-    const timeout = setTimeout(() => {
-      carregarDados(pagina);
-      setTransicao("in");
-    }, 300);
+    carregarDados();
+  }, [carregarDados]);
 
-    return () => clearTimeout(timeout);
-  }, [pagina]);
+  useEffect(() => {
+    if (termoPesquisa !== "" || pagina !== 0) {
+      setPagina(prevPagina => {
+        if (prevPagina !== 0) {
+          return 0;
+        }
+        return prevPagina;
+      });
+    }
+  }, [termoPesquisa]);
 
   const mudarPagina = (novaPagina) => {
     if (novaPagina >= 0 && novaPagina < totalPaginas) {
-      setSearchParams({ pagina: novaPagina });
-    }
-  };
-
-  const handleClickItem = (id) => {
-    if (nomeEntidade) {
-      navigate(`/${nomeEntidade}/perfil/${id}`);
+      setPagina(novaPagina);
     }
   };
 
   return (
-    <div className="lista-container">
-      <button
-        className="seta-lateral esquerda"
-        onClick={() => mudarPagina(pagina - 1)}
-        disabled={pagina === 0}
-      >
-        ◀
-      </button>
-
-      <div className={`lista-centro transicao-${transicao}`}>
+    <div className="lista-container-geral">
+      <div className="lista-sidebar">
         <h2>{titulo}</h2>
+        <div className="caixa-pesquisa">
+          <input
+            type="text"
+            placeholder={`Pesquisar ${nomeEntidade}...`}
+            value={termoPesquisa}
+            onChange={(e) => setTermoPesquisa(e.target.value)}
+          />
+        </div>
+      </div>
 
+      <div className="lista-conteudo-principal">
         {loading && <p>Carregando...</p>}
         {erro && <p className="erro">{erro}</p>}
         {!loading && !erro && itens.length === 0 && <p>Nenhum item encontrado.</p>}
 
         <div className="lista-grid">
           {itens.map((item) => (
-            <div key={item.id} onClick={() => handleClickItem(item.id)}>
+            <div key={item.id}>
               <ComponenteItem item={item} />
             </div>
           ))}
         </div>
 
-        <div className="controle-pagina">
-          <span>Página:</span>
-          <select
-            value={pagina}
-            onChange={(e) => mudarPagina(parseInt(e.target.value))}
-          >
-            {Array.from({ length: totalPaginas }).map((_, i) => (
-              <option key={i} value={i}>
-                {i + 1}
-              </option>
-            ))}
-          </select>
-        </div>
+        {totalPaginas > 1 && (
+          <div className="controle-pagina">
+            <button onClick={() => mudarPagina(pagina - 1)} disabled={pagina === 0}>
+              ◀
+            </button>
+            <span>
+              Página {pagina + 1} de {totalPaginas}
+            </span>
+            <button onClick={() => mudarPagina(pagina + 1)} disabled={pagina + 1 >= totalPaginas}>
+              ▶
+            </button>
+          </div>
+        )}
       </div>
-
-      <button
-        className="seta-lateral direita"
-        onClick={() => mudarPagina(pagina + 1)}
-        disabled={(pagina + 1) >= totalPaginas}
-      >
-        ▶
-      </button>
     </div>
   );
 }

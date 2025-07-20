@@ -1,0 +1,45 @@
+.card-base {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-base:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-base h3 {
+  color: #007bff;
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 1.8em;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+}
+
+.card-base p {
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 1.05em;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.card-base p strong {
+  color: #333;
+  font-weight: 600;
+}

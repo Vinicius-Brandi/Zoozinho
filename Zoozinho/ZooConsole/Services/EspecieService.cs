@@ -3,6 +3,7 @@ using ZooConsole.DTOs;
 using ZooConsole.Enum;
 using ZooConsole.Models;
 using ZooConsole.Repository;
+using NHibernate;
 
 namespace ZooConsole.Services
 {
@@ -52,6 +53,12 @@ namespace ZooConsole.Services
                 return false;
             }
 
+            if (especie.Habitat != null && especie.Categoria.Id != dto.CategoriaId)
+            {
+                mensagens.Add(new MensagemErro("Categoria", "Não é possível alterar a categoria de uma espécie que já possui habitat associado."));
+                return false;
+            }
+
             var categoria = ObterCategoria(dto.CategoriaId, mensagens);
             if (categoria == null) return false;
 
@@ -83,14 +90,38 @@ namespace ZooConsole.Services
                 Alimentacao = especie.Alimentacao.ToString(),
                 Comportamento = especie.Comportamento.ToString(),
                 CategoriaId = especie.Categoria.Id,
+                CategoriaNome = especie.Categoria.Nome,
                 AnimaisNomes = especie.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
                 HabitatNome = especie.Habitat?.Nome ?? "Nenhum"
             };
         }
 
-        public List<EspecieListagemDTO> Listar()
+        public TotalItens<EspecieListagemDTO> Listar(int skip = 0, int pageSize = 10, string pesquisa = null, long? categoriaId = null)
         {
-            return _repository.Consultar<Especie>().ToList()
+            IQueryable<Especie> consulta = _repository.Consultar<Especie>();
+            if (categoriaId.HasValue && categoriaId.Value > 0)
+            {
+                consulta = consulta.Where(e => e.Categoria != null && e.Categoria.Id == categoriaId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(pesquisa))
+            {
+                consulta = consulta.Where(e => e.Nome.ToLower().Contains(pesquisa.ToLower()));
+            }
+            consulta = consulta.OrderBy(e => e.Nome);
+
+            int total = consulta.Count();
+            if (skip > 0)
+            {
+                consulta = consulta.Skip(skip);
+            }
+
+            if (pageSize > 0)
+            {
+                consulta = consulta.Take(pageSize);
+            }
+
+            var itens = consulta.ToList()
                 .Select(e => new EspecieListagemDTO
                 {
                     Id = e.Id,
@@ -98,38 +129,86 @@ namespace ZooConsole.Services
                     Alimentacao = e.Alimentacao.ToString(),
                     Comportamento = e.Comportamento.ToString(),
                     CategoriaId = e.Categoria.Id,
+                    CategoriaNome = e.Categoria.Nome,
                     AnimaisNomes = e.Animais?.Select(a => a.Nome).ToList() ?? new List<string>(),
                     HabitatNome = e.Habitat?.Nome ?? "Nenhum"
                 }).ToList();
-        }
 
+            return new TotalItens<EspecieListagemDTO>
+            {
+                Total = total,
+                Itens = itens
+            };
+        }
 
         public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
         {
             mensagens = new List<MensagemErro>();
             var especie = _repository.ConsultarPorId<Especie>(id);
+
             if (especie == null)
             {
                 mensagens.Add(new MensagemErro("Id", "Espécie não encontrada."));
                 return false;
             }
 
-            if (!forcar)
-            {
-                if (especie.Animais?.Any() == true)
-                    mensagens.Add(new MensagemErro("Animais", "Esta espécie possui animais associados."));
-                if (especie.Habitat != null)
-                    mensagens.Add(new MensagemErro("Habitat", "Esta espécie está associada a um habitat."));
-                if (mensagens.Any())
-                    return false;
-            }
-
             try
             {
                 using var transacao = _repository.IniciarTransacao();
+
+                if (!forcar)
+                {
+                    if ((especie.Animais?.Any() ?? false))
+                        mensagens.Add(new MensagemErro("Animais", "Esta espécie possui animais associados."));
+                    if (especie.Habitat != null)
+                        mensagens.Add(new MensagemErro("Habitat", "Esta espécie está associada a um habitat."));
+
+                    if (mensagens.Any())
+                    {
+                        _repository.Rollback();
+                        return false;
+                    }
+                }
+                else
+                {
+                    foreach (var animal in especie.Animais?.ToList() ?? new List<Animal>())
+                    {
+                        foreach (var mov in animal.Movimentacoes?.ToList() ?? new List<Movimentacao>())
+                            _repository.Excluir(mov);
+
+                        animal.Movimentacoes?.Clear();
+                        animal.Galpao?.Animais?.Remove(animal);
+                        animal.Habitat?.Animais?.Remove(animal);
+
+                        animal.Galpao = null;
+                        animal.Habitat = null;
+                        animal.Especie = null;
+
+                        _repository.Excluir(animal);
+                    }
+                    especie.Animais?.Clear();
+
+                    if (especie.Habitat != null)
+                    {
+                        especie.Habitat.Especie = null;
+                        especie.Habitat.Recinto?.Habitats?.Remove(especie.Habitat);
+                        _repository.Excluir(especie.Habitat);
+                        especie.Habitat = null;
+                    }
+
+                    especie.Categoria?.Especies?.Remove(especie);
+                    especie.Categoria = null;
+                }
+
                 _repository.Excluir(especie);
                 _repository.Commit();
                 return true;
+            }
+            catch (StaleObjectStateException ex)
+            {
+                _repository.Rollback();
+                mensagens.Add(new MensagemErro("Concorrência", $"Erro de concorrência: A espécie pode já ter sido modificada ou excluída. Detalhes: {ex.Message}"));
+                return false;
             }
             catch (Exception ex)
             {
@@ -203,6 +282,5 @@ namespace ZooConsole.Services
                     Quantidade = g.Count()
                 }).ToList();
         }
-
     }
 }

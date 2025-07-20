@@ -26,10 +26,11 @@ namespace ZoozinhoAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Listar()
+        [HttpGet]
+        public IActionResult Listar(int skip = 0, int pageSize = 10, string pesquisa = null)
         {
-            var categorias = _servico.Listar();
-            return Ok(categorias);
+            var lista = _servico.Listar(skip, pageSize, pesquisa);
+            return Ok(lista);
         }
 
         [HttpGet("{id:long}")]
@@ -52,9 +53,9 @@ namespace ZoozinhoAPI.Controllers
         }
 
         [HttpDelete("{id:long}")]
-        public IActionResult Deletar(long id, [FromQuery] bool forcar = false)
+        public IActionResult Deletar(long id)
         {
-            if (_servico.Deletar(id, out var erros, forcar))
+            if (_servico.Deletar(id, out var erros))
                 return Ok(new { mensagem = "Categoria excluída com sucesso." });
 
             return UnprocessableEntity(erros);

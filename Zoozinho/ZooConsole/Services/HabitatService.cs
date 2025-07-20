@@ -79,10 +79,35 @@ namespace ZooConsole.Services
             };
         }
 
-
-        public List<HabitatListagemDTO> Listar()
+        public TotalItens<HabitatListagemDTO> Listar(int skip = 0, int pageSize = 10, long? recintoId = null, string pesquisa = null)
         {
-            return _repository.Consultar<Habitat>().ToList()
+            IQueryable<Habitat> consulta = _repository.Consultar<Habitat>();
+
+            if (recintoId.HasValue)
+            {
+                consulta = consulta.Where(h => h.RecintoId == recintoId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(pesquisa))
+            {
+                consulta = consulta.Where(h => h.Nome.ToLower().Contains(pesquisa.ToLower()));
+            }
+
+            consulta = consulta.OrderBy(h => h.Nome);
+
+            int total = consulta.Count();
+
+            if (skip > 0)
+            {
+                consulta = consulta.Skip(skip);
+            }
+
+            if (pageSize > 0)
+            {
+                consulta = consulta.Take(pageSize);
+            }
+
+            var itens = consulta.ToList()
                 .Select(h => new HabitatListagemDTO
                 {
                     Id = h.Id,
@@ -94,30 +119,48 @@ namespace ZooConsole.Services
                     MaxCapacidade = h.MaxCapacidade,
                     AnimaisNomes = h.Animais.Select(a => a.Nome).ToList()
                 }).ToList();
+
+            return new TotalItens<HabitatListagemDTO>
+            {
+                Total = total,
+                Itens = itens
+            };
         }
 
-
-        public bool Deletar(long id, out List<MensagemErro> mensagens, bool forcar = false)
+        public bool Deletar(long id, out List<MensagemErro> mensagens)
         {
             mensagens = new List<MensagemErro>();
-
             var habitat = _repository.ConsultarPorId<Habitat>(id);
+
             if (habitat == null)
             {
                 mensagens.Add(new MensagemErro("Id", "Habitat não encontrado."));
                 return false;
             }
 
-            if (!forcar && habitat.Animais.Any())
+            if (habitat.Animais?.Any() == true)
             {
-                mensagens.Add(new MensagemErro("Animais", "Este habitat possui animais associados."));
+                mensagens.Add(new MensagemErro("Animais", "O habitat possui animais associados e não pode ser excluído."));
                 return false;
             }
 
             try
             {
                 using var transacao = _repository.IniciarTransacao();
+                if (habitat.Recinto != null)
+                {
+                    habitat.Recinto.Habitats.Remove(habitat);
+                    habitat.Recinto = null;
+                }
+
+                if (habitat.Especie != null)
+                {
+                    habitat.Especie.Habitat = null;
+                    habitat.Especie = null;
+                }
+
                 _repository.Excluir(habitat);
+
                 _repository.Commit();
                 return true;
             }

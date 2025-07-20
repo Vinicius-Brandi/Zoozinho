@@ -17,7 +17,7 @@
 		<property name="EspecieId" column="especieid" type="long" insert="false" update="false"/>
 
 		<many-to-one name="Recinto" class="Recinto" column="recintoid" not-null="true"/>
-		<many-to-one name="Especie" class="Especie" column="especieid" not-null="true"/>
+		<many-to-one name="Especie" class="Especie" column="especieid"/>
 
 		<bag name="Animais" inverse="true" cascade="all-delete-orphan" lazy="false">
 			<key column="habitatid"/>

@@ -4,23 +4,23 @@ import {
   cadastrarCategoria,
   atualizarCategoria,
 } from '../../services';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ModalAlert from '../Gerais/modalAlerta';
 import { useModalAlert } from '../../services/config';
 import "../Gerais/styles/cadastros.css";
 
 export default function CadastroCategoria({ onSuccess, onClose }) {
   const { id: categoriaId } = useParams();
+  const navigate = useNavigate();
   const [categoria, setCategoria] = useState(null);
   const { modalOpen, modalTitle, modalMessage, showModal, closeModal } = useModalAlert();
-
   useEffect(() => {
     if (categoriaId) {
       buscarCategoriaPorId(categoriaId)
         .then(setCategoria)
         .catch(() => showModal("Erro", "Erro ao carregar dados da categoria."));
     }
-  }, [categoriaId]);
+  }, [categoriaId, showModal]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,9 +45,28 @@ export default function CadastroCategoria({ onSuccess, onClose }) {
       }
 
       if (onSuccess) onSuccess();
-      if (onClose) onClose();
+      if (onClose) {
+        onClose();
+      } else if (categoriaId) {
+        navigate(`/categorias/perfil/${categoriaId}`);
+      } else {
+        navigate('/categorias');
+      }
+
     } catch (err) {
       showModal("Erro ao salvar", "Erro inesperado ao salvar categoria.");
+    }
+  };
+
+  const handleCancel = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      if (categoriaId) {
+        navigate(`/categorias/perfil/${categoriaId}`);
+      } else {
+        navigate('/categorias');
+      }
     }
   };
 
@@ -71,8 +90,8 @@ export default function CadastroCategoria({ onSuccess, onClose }) {
           <button type="submit" className="button-submit">
             {categoriaId ? 'Atualizar' : 'Cadastrar'}
           </button>
-          {onClose && (
-            <button type="button" onClick={onClose} className="button-reset">
+          {categoriaId && (
+            <button type="button" onClick={handleCancel} className="button-reset">
               Cancelar
             </button>
           )}
