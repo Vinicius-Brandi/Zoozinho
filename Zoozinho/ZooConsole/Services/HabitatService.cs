@@ -147,6 +147,25 @@ namespace ZooConsole.Services
             try
             {
                 using var transacao = _repository.IniciarTransacao();
+                var movimentacoes = _repository.Consultar<Movimentacao>()
+                    .Where(m => m.OrigemHabitatId == habitat.Id || m.DestinoHabitatId == habitat.Id)
+                    .ToList();
+
+                foreach (var mov in movimentacoes)
+                {
+                    if (mov.OrigemHabitatId == habitat.Id)
+                    {
+                        mov.OrigemHabitat = null;
+                        mov.OrigemHabitatId = null;
+                    }
+                    if (mov.DestinoHabitatId == habitat.Id)
+                    {
+                        mov.DestinoHabitat = null;
+                        mov.DestinoHabitatId = null;
+                    }
+                    _repository.Salvar(mov);
+                }
+
                 if (habitat.Recinto != null)
                 {
                     habitat.Recinto.Habitats.Remove(habitat);
